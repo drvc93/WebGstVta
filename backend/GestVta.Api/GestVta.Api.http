@@ -1,0 +1,6 @@
+@GestVta.Api_HostAddress = http://localhost:5288
+
+GET {{GestVta.Api_HostAddress}}/api/companias
+Accept: application/json
+
+###

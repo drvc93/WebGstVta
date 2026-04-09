@@ -1,0 +1,262 @@
+<div class="page-head gest-page-head d-flex flex-wrap align-items-baseline justify-content-between gap-2">
+  <h1 class="h3 mb-0 gest-page-title">Compañía</h1>
+  <nav class="crumbs small text-secondary d-flex align-items-center gap-1" aria-label="Miga de pan">
+    <i class="bi bi-folder2" aria-hidden="true"></i>
+    <span>Home / Compañía</span>
+  </nav>
+</div>
+
+@if (error()) {
+  <p class="error alert alert-danger py-2 px-3">{{ error() }}</p>
+}
+
+<div class="toolbar gest-toolbar d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+  <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1 rounded-pill px-3" (click)="nuevo()">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Nuevo
+  </button>
+  <div class="compania-search input-group input-group-sm">
+    <span class="input-group-text compania-search-icon" aria-hidden="true">
+      <i class="bi bi-search"></i>
+    </span>
+    <input
+      id="compania-search-input"
+      type="search"
+      class="form-control compania-search-input"
+      placeholder="Buscar por código, nombre, documento, teléfono…"
+      autocomplete="off"
+      [value]="searchText()"
+      (input)="setSearch($any($event.target).value)"
+      aria-label="Buscar compañías"
+    />
+    @if (searchText()) {
+      <button type="button" class="btn btn-outline-secondary compania-search-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="gest-loading-panel" role="status" aria-live="polite">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span>Cargando compañías…</span>
+  </div>
+} @else {
+  <div class="card gest-panel gest-data-card compania-table-card">
+    <div class="card-body p-0">
+      <div class="table-responsive compania-table-wrap">
+        <table class="table table-hover table-gest compania-table mb-0 align-middle">
+      <thead>
+        <tr>
+          <th scope="col" class="compania-th-sort" (click)="toggleSort('codigo')">
+            <span class="compania-th-text">Compañía</span>
+            @switch (sortIconState('codigo')) {
+              @case ('asc') {
+                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @case ('desc') {
+                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @default {
+                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+              }
+            }
+          </th>
+          <th scope="col" class="compania-th-sort" (click)="toggleSort('nombre')">
+            <span class="compania-th-text">Nombre</span>
+            @switch (sortIconState('nombre')) {
+              @case ('asc') {
+                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @case ('desc') {
+                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @default {
+                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+              }
+            }
+          </th>
+          <th scope="col" class="compania-th-sort" (click)="toggleSort('numeroDocumento')">
+            <span class="compania-th-text">Documento</span>
+            @switch (sortIconState('numeroDocumento')) {
+              @case ('asc') {
+                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @case ('desc') {
+                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @default {
+                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+              }
+            }
+          </th>
+          <th scope="col" class="compania-th-sort" (click)="toggleSort('telefono1')">
+            <span class="compania-th-text">Teléfono</span>
+            @switch (sortIconState('telefono1')) {
+              @case ('asc') {
+                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @case ('desc') {
+                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @default {
+                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+              }
+            }
+          </th>
+          <th scope="col" class="compania-th-sort" (click)="toggleSort('telefono2')">
+            <span class="compania-th-text">Teléfono 2</span>
+            @switch (sortIconState('telefono2')) {
+              @case ('asc') {
+                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @case ('desc') {
+                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @default {
+                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+              }
+            }
+          </th>
+          <th scope="col" class="compania-th-static">
+            <span class="compania-th-text">Estado</span>
+          </th>
+          <th scope="col" class="compania-th-sort" (click)="toggleSort('ultUsuario')">
+            <span class="compania-th-text">Últ. usu.</span>
+            @switch (sortIconState('ultUsuario')) {
+              @case ('asc') {
+                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @case ('desc') {
+                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @default {
+                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+              }
+            }
+          </th>
+          <th scope="col" class="compania-th-sort" (click)="toggleSort('ultMod')">
+            <span class="compania-th-text">Últ. mod.</span>
+            @switch (sortIconState('ultMod')) {
+              @case ('asc') {
+                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @case ('desc') {
+                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+              }
+              @default {
+                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+              }
+            }
+          </th>
+          <th scope="col" class="text-end compania-th-static compania-th-action">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of pageRows(); track c.id) {
+          <tr class="compania-row">
+            <td class="compania-code">{{ c.codigo }}</td>
+            <td class="compania-nombre" [title]="c.nombre">{{ c.nombre }}</td>
+            <td class="compania-doc">{{ c.numeroDocumento }}</td>
+            <td class="compania-tel">{{ c.telefono1 }}</td>
+            <td class="compania-tel">{{ c.telefono2 }}</td>
+            <td>
+              @if (c.activo) {
+                <span class="badge compania-badge compania-badge--ok">Activo</span>
+              } @else {
+                <span class="badge compania-badge compania-badge--off">Inactivo</span>
+              }
+            </td>
+            <td class="compania-meta">{{ c.ultUsuario }}</td>
+            <td class="compania-meta">{{ c.ultMod | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td class="text-end">
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 rounded-pill px-2"
+                title="Editar"
+                (click)="editar(c.id)"
+              >
+                <i class="bi bi-pencil" aria-hidden="true"></i>
+                Editar
+              </button>
+            </td>
+          </tr>
+        }
+        @if (pageRows().length === 0) {
+          <tr>
+            <td colspan="9" class="gest-empty-cell">
+              @if (rows().length === 0) {
+                <div class="gest-empty-state">
+                  <i class="bi bi-inbox" aria-hidden="true"></i>
+                  <span class="gest-empty-title">No hay compañías</span>
+                  <p class="gest-empty-hint">Pulse <strong>Nuevo</strong> para registrar la primera.</p>
+                </div>
+              } @else if (searchText().trim()) {
+                <div class="gest-empty-state">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                  <span class="gest-empty-title">Sin resultados</span>
+                  <p class="gest-empty-hint mb-2">
+                    Ninguna compañía coincide con «<strong>{{ searchText().trim() }}</strong>».
+                  </p>
+                  <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" (click)="clearSearch()">
+                    Limpiar búsqueda
+                  </button>
+                </div>
+              } @else {
+                <div class="gest-empty-state">
+                  <i class="bi bi-inbox" aria-hidden="true"></i>
+                  <span class="gest-empty-title">Sin datos en esta página</span>
+                </div>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer compania-pager d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+    <div class="d-flex align-items-center gap-2">
+      <label class="small mb-0 text-secondary fw-medium" for="pageSizeSel">Filas por página</label>
+      <select id="pageSizeSel" class="form-select form-select-sm compania-page-size" [value]="pageSize()" (change)="setPageSize(+$any($event.target).value)">
+        @for (n of pageSizeOptions; track n) {
+          <option [value]="n">{{ n }}</option>
+        }
+      </select>
+    </div>
+    <div class="d-flex align-items-center flex-wrap gap-2">
+      <span class="small compania-pager-info">
+        Página <strong>{{ pageIndex() + 1 }}</strong> de <strong>{{ totalPages() }}</strong>
+        <span class="text-secondary">
+          · {{ sortedRows().length }}
+          @if (searchText().trim() && rows().length !== sortedRows().length) {
+            <span> de {{ rows().length }}</span>
+          }
+          registros
+        </span>
+      </span>
+      <div class="btn-group compania-pager-btns" role="group" aria-label="Paginación">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1"
+          [disabled]="pageIndex() === 0"
+          (click)="prevPage()"
+        >
+          <i class="bi bi-chevron-left" aria-hidden="true"></i>
+          Anterior
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1"
+          [disabled]="pageIndex() >= totalPages() - 1"
+          (click)="nextPage()"
+        >
+          Siguiente
+          <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    </div>
+  </div>
+}

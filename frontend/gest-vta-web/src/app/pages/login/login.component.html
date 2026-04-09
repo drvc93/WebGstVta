@@ -1,0 +1,46 @@
+<div class="login-page d-flex align-items-center justify-content-center min-vh-100 px-3">
+  <div class="login-card card gest-panel shadow border-0 w-100" style="max-width: 420px">
+    <div class="card-header gest-card-header border-0">
+      <div class="d-flex align-items-center gap-2">
+        <span class="login-mark d-inline-flex align-items-center justify-content-center rounded-3" aria-hidden="true">
+          <i class="bi bi-layers-half"></i>
+        </span>
+        <span class="fw-bold">GestVta</span>
+      </div>
+      <p class="small text-secondary mb-0 mt-2">Inicie sesión para continuar</p>
+    </div>
+    <div class="card-body pt-3">
+      @if (errorMsg()) {
+        <div class="alert alert-danger py-2 small mb-3" role="alert">{{ errorMsg() }}</div>
+      }
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <label class="form-label small mb-1" for="login-user">Usuario</label>
+        <input
+          id="login-user"
+          class="form-control form-control-sm mb-3"
+          type="text"
+          autocomplete="username"
+          formControlName="username"
+        />
+
+        <label class="form-label small mb-1" for="login-pass">Contraseña</label>
+        <input
+          id="login-pass"
+          class="form-control form-control-sm mb-3"
+          type="password"
+          autocomplete="current-password"
+          formControlName="password"
+        />
+
+        <button type="submit" class="btn btn-primary btn-sm w-100 d-inline-flex align-items-center justify-content-center gap-2" [disabled]="loading()">
+          @if (loading()) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          } @else {
+            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+          }
+          Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

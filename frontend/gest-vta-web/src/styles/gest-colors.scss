@@ -1,0 +1,52 @@
+// =============================================================================
+// GestVta — paleta global (único lugar para editar colores de marca)
+// Se usa en: variables Bootstrap ($primary, …) y CSS custom properties (:root)
+// =============================================================================
+
+// Azul marino
+$gest-navy-950: #0a1628;
+$gest-navy-900: #0f2744;
+$gest-navy-800: #153a5c;
+$gest-navy-700: #1e4976;
+
+// Neutros
+$gest-white: #ffffff;
+$gest-off-white: #f5f8fc;
+$gest-border-light: #d6dee8;
+
+// Texto sobre fondo marino (sidebar)
+$gest-text-on-navy: #f8fafc;
+$gest-text-on-navy-muted: #b8c9dc;
+
+// Acentos
+$gest-accent-active: #8eb8e8;
+
+// Bootstrap (derivados de la paleta)
+$gest-primary: #1a3a5c;
+$gest-secondary: #5a6d82;
+$gest-light: #f0f4fa;
+$gest-dark: #0f2744;
+
+// --- Modo oscuro (sobrescribe tokens en [data-bs-theme='dark']) ---
+$gest-dark-navy-950: #060d18;
+$gest-dark-navy-900: #0a1628;
+$gest-dark-navy-800: #0f2744;
+$gest-dark-navy-700: #1a3a5c;
+$gest-dark-white: #f0f4fa;
+$gest-dark-off-white: #0f1a2a;
+$gest-dark-border-light: rgba(255, 255, 255, 0.08);
+$gest-dark-text-on-navy: #f1f5f9;
+$gest-dark-text-on-navy-muted: #94a8bc;
+$gest-dark-accent-active: #a8c4eb;
+
+$gest-dark-body-bg: #0c1628;
+$gest-dark-body-color: #eef2f7;
+$gest-dark-secondary-color: #9fb0c4;
+$gest-dark-bs-border: rgba(255, 255, 255, 0.1);
+$gest-dark-tertiary-bg: #0f1f35;
+$gest-dark-sidebar-edge: rgba(255, 255, 255, 0.08);
+
+// Ancho barra lateral (también expuesto como --gest-sidebar-width en :root)
+$gest-sidebar-width: 17rem;
+// Borde sidebar / contenido (sobre fondo marino)
+$gest-sidebar-edge: rgba(255, 255, 255, 0.1);

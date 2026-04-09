@@ -1,0 +1,100 @@
+@use './styles/gest-colors' as gest;
+
+/* Bootstrap: primarios desde la paleta global (gest-colors.scss) */
+$primary: gest.$gest-primary;
+$secondary: gest.$gest-secondary;
+$light: gest.$gest-light;
+$dark: gest.$gest-dark;
+
+/* Bootstrap 5.x sigue basado en @import; el aviso Sass se silencia en angular.json (silenceDeprecations: import). */
+@import 'bootstrap/scss/bootstrap';
+
+/* CSS variables globales (mismo origen que gest-colors.scss) */
+:root,
+[data-bs-theme='light'] {
+  --gest-sidebar-width: #{gest.$gest-sidebar-width};
+  --gest-navy-950: #{gest.$gest-navy-950};
+  --gest-navy-900: #{gest.$gest-navy-900};
+  --gest-navy-800: #{gest.$gest-navy-800};
+  --gest-navy-700: #{gest.$gest-navy-700};
+  --gest-white: #{gest.$gest-white};
+  --gest-off-white: #{gest.$gest-off-white};
+  --gest-border-light: #{gest.$gest-border-light};
+  --gest-text-on-navy: #{gest.$gest-text-on-navy};
+  --gest-text-on-navy-muted: #{gest.$gest-text-on-navy-muted};
+  --gest-accent-soft: #{rgba(255, 255, 255, 0.12)};
+  --gest-accent-active: #{gest.$gest-accent-active};
+  --gest-sidebar-edge: #{gest.$gest-sidebar-edge};
+}
+
+[data-bs-theme='dark'],
+html.app-dark {
+  --gest-navy-950: #{gest.$gest-dark-navy-950};
+  --gest-navy-900: #{gest.$gest-dark-navy-900};
+  --gest-navy-800: #{gest.$gest-dark-navy-800};
+  --gest-navy-700: #{gest.$gest-dark-navy-700};
+  --gest-white: #{gest.$gest-dark-white};
+  --gest-off-white: #{gest.$gest-dark-off-white};
+  --gest-border-light: #{gest.$gest-dark-border-light};
+  --gest-text-on-navy: #{gest.$gest-dark-text-on-navy};
+  --gest-text-on-navy-muted: #{gest.$gest-dark-text-on-navy-muted};
+  --gest-accent-soft: #{rgba(255, 255, 255, 0.08)};
+  --gest-accent-active: #{gest.$gest-dark-accent-active};
+  --gest-sidebar-edge: #{gest.$gest-dark-sidebar-edge};
+
+  --bs-body-bg: #{gest.$gest-dark-body-bg};
+  --bs-body-color: #{gest.$gest-dark-body-color};
+  --bs-secondary-color: #{gest.$gest-dark-secondary-color};
+  --bs-border-color: #{gest.$gest-dark-bs-border};
+  --bs-tertiary-bg: #{gest.$gest-dark-tertiary-bg};
+}
+
+@import './styles/gest-modern';
+
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+body.app-dark {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.table-gest thead th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  color: var(--gest-navy-800);
+}
+
+[data-bs-theme='dark'] .table-gest thead th,
+html.app-dark .table-gest thead th {
+  color: var(--gest-text-on-navy-muted);
+}
+
+.table-gest thead th:hover {
+  background-color: var(--bs-table-hover-bg);
+}
+
+html:not(.app-dark) .card {
+  border-color: var(--gest-border-light);
+}
+
+html:not(.app-dark) .table-light {
+  --bs-table-bg: var(--gest-off-white);
+  color: var(--gest-navy-900);
+}

@@ -1,0 +1,19 @@
+.login-page {
+  background: var(--gest-off-white, #f5f8fc);
+}
+
+.login-mark {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--gest-white, #fff);
+  color: var(--gest-navy-900, #0f2744);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+  .bi {
+    font-size: 1.1rem;
+  }
+}
+
+html.app-dark .login-page {
+  background: var(--bs-body-bg, #0c1628);
+}

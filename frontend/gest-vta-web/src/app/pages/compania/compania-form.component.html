@@ -1,0 +1,169 @@
+<div class="gest-form-shell">
+  <div class="card gest-panel">
+    <div class="card-header gest-card-header d-flex align-items-center gap-2">
+      @if (isEdit()) {
+        <i class="bi bi-pencil-square text-primary" aria-hidden="true"></i>
+      } @else {
+        <i class="bi bi-building-add text-primary" aria-hidden="true"></i>
+      }
+      {{ isEdit() ? 'Actualizar Compañía' : 'Nueva Compañía' }}
+    </div>
+    <div class="card-body">
+    @if (loading()) {
+      <div class="gest-loading-panel gest-loading-panel--plain" role="status" aria-live="polite">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        <span>Cargando formulario…</span>
+      </div>
+    } @else {
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="solicitarGuardado()">
+        <div class="form-col">
+          <label class="field-label form-label mb-0" for="codigo">Compañía</label>
+          <input id="codigo" class="form-control form-control-sm" formControlName="codigo" [readonly]="isEdit()" />
+
+          <label class="field-label form-label mb-0" for="nombre">Nombre</label>
+          <input id="nombre" class="form-control form-control-sm" formControlName="nombre" />
+
+          <label class="field-label form-label mb-0" for="td">Tipo doc.</label>
+          <select id="td" class="form-select form-select-sm" formControlName="tipoDocumentoId">
+            <option [ngValue]="null">Seleccione</option>
+            @for (t of tiposDoc(); track t.id) {
+              <option [ngValue]="t.id">{{ t.nombre }}</option>
+            }
+          </select>
+
+          <label class="field-label form-label mb-0" for="ndoc">Documento</label>
+          <input id="ndoc" class="form-control form-control-sm" formControlName="numeroDocumento" />
+
+          <label class="field-label form-label mb-0" for="dir">Dirección</label>
+          <input id="dir" class="form-control form-control-sm" formControlName="direccion" />
+
+          <label class="field-label form-label mb-0" for="pais">País</label>
+          <select id="pais" class="form-select form-select-sm" formControlName="paisId">
+            <option [ngValue]="null">Seleccione</option>
+            @for (p of paisesFiltrados(); track p.id) {
+              <option [ngValue]="p.id">{{ p.nombre }} ({{ p.codigo }})</option>
+            }
+          </select>
+
+          <label class="field-label form-label mb-0" for="ub">Ubigeo</label>
+          <select id="ub" class="form-select form-select-sm" formControlName="ubigeoId">
+            <option [ngValue]="null">(opcional)</option>
+            @for (u of ubigeoOptions(); track u.id) {
+              <option [ngValue]="u.id">{{ u.label }}</option>
+            }
+          </select>
+
+          <label class="field-label form-label mb-0" for="mail">Correo</label>
+          <input id="mail" type="email" class="form-control form-control-sm" formControlName="correo" />
+
+          <div class="form-check form-switch switch-row">
+            <input class="form-check-input" type="checkbox" role="switch" id="act" formControlName="activo" />
+            <label class="form-check-label" for="act">Activo</label>
+          </div>
+        </div>
+
+        <div class="form-col">
+          @if (form.value.logoPath) {
+            <div class="logo-preview">
+              <img [src]="form.value.logoPath" alt="Logo" />
+            </div>
+          }
+          <label class="field-label form-label mb-0">Foto / logo</label>
+          <input type="file" class="form-control form-control-sm" accept="image/*" (change)="logoPick($event)" />
+
+          <label class="field-label form-label mb-0" for="colorPrimario">Color principal</label>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <input
+              id="colorPrimario"
+              type="color"
+              class="form-control form-control-color"
+              [formControl]="form.controls.colorPrimario"
+              title="Color de marca"
+            />
+            <input
+              type="text"
+              class="form-control form-control-sm flex-grow-1"
+              style="max-width: 8rem"
+              [formControl]="form.controls.colorPrimario"
+              maxlength="7"
+              spellcheck="false"
+              aria-label="Código hexadecimal del color"
+            />
+          </div>
+
+          <label class="field-label form-label mb-0" for="t1">Teléfono</label>
+          <input id="t1" class="form-control form-control-sm" formControlName="telefono1" />
+
+          <label class="field-label form-label mb-0" for="t2">Teléfono 2</label>
+          <input id="t2" class="form-control form-control-sm" formControlName="telefono2" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-check-lg" aria-hidden="true"></i>
+            Guardar
+          </button>
+          <button type="button" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1" (click)="cancelar()">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+            Cancelar
+          </button>
+        </div>
+      </form>
+    }
+    </div>
+  </div>
+</div>
+
+@if (confirmModalOpen()) {
+  <div class="modal-backdrop fade show gest-confirm-backdrop" (click)="cerrarConfirmacion()"></div>
+  <div
+    class="modal fade show d-block gest-confirm-modal"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirmSaveTitle"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-bottom">
+          <h2 class="modal-title h5 mb-0 d-flex align-items-center gap-2" id="confirmSaveTitle">
+            <i class="bi bi-question-circle text-primary" aria-hidden="true"></i>
+            {{ tituloConfirmacion() }}
+          </h2>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Cerrar"
+            [disabled]="saving()"
+            (click)="cerrarConfirmacion()"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0">{{ mensajeConfirmacion() }}</p>
+          <p class="small text-secondary mb-0 mt-2">
+            <strong>{{ form.value.codigo }}</strong> — {{ form.value.nombre }}
+          </p>
+        </div>
+        <div class="modal-footer border-top bg-body-tertiary">
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
+            [disabled]="saving()"
+            (click)="cerrarConfirmacion()"
+          >
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            Volver
+          </button>
+          <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1" [disabled]="saving()" (click)="confirmarYGuardar()">
+            @if (saving()) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            } @else {
+              <i class="bi bi-cloud-upload" aria-hidden="true"></i>
+            }
+            Sí, guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
