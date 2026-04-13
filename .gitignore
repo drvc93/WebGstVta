@@ -37,3 +37,4 @@ temp-hash/
 .env
 .env.*
 **/appsettings.Development.json
+/backend/GestVta.Api/Logs
