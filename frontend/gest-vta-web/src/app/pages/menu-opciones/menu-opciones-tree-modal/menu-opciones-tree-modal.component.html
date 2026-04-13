@@ -1,0 +1,150 @@
+<div
+  class="menu-op-modal-backdrop"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="'menu-op-modal-title'"
+  (click)="closed.emit()"
+>
+  <div class="modal-dialog modal-xl modal-dialog-centered menu-op-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content menu-op-modal-sheet border-0 shadow-lg">
+      <header class="menu-op-modal-head">
+        <div class="menu-op-modal-head-main">
+          <div class="menu-op-modal-head-lead">
+            <span class="menu-op-modal-eyebrow">Opciones bajo la sección</span>
+            <h2 id="menu-op-modal-title" class="menu-op-modal-title">
+              <i class="bi bi-diagram-3 menu-op-modal-title-icon" aria-hidden="true"></i>
+              <span class="menu-op-modal-title-text">{{ seccion().nombre }}</span>
+            </h2>
+          </div>
+          <div class="menu-op-modal-head-meta" aria-label="Código y tamaño del árbol">
+            <span class="menu-op-modal-code-badge font-monospace">{{ seccion().codigo }}</span>
+            <span class="menu-op-modal-meta-sep" aria-hidden="true"></span>
+            <span class="menu-op-modal-count">{{ totalEnArbol() }} en el árbol</span>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white menu-op-modal-close" (click)="closed.emit()" aria-label="Cerrar"></button>
+      </header>
+
+      <div class="modal-body menu-op-modal-body p-0">
+        <div class="menu-op-modal-cta px-2 py-2 border-bottom bg-body-tertiary">
+          <div class="row g-2 align-items-center">
+            <div class="col-lg">
+              <p class="mb-0 text-secondary small menu-op-modal-hint">
+                <strong>›</strong> expande ramas con hijos. Orden según campo <strong>Orden</strong>.
+              </p>
+            </div>
+            <div class="col-lg-auto">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-1"
+                (click)="agregarEnSeccion.emit()"
+              >
+                <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                Agregar opción
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-op-tree-scroll px-2 py-2">
+          @if (nodes().length === 0) {
+            <div class="menu-op-empty text-center py-5 px-3">
+              <i class="bi bi-inbox display-6 text-secondary mb-3 d-block" aria-hidden="true"></i>
+              <p class="mb-2 fw-medium">Aún no hay opciones en esta sección</p>
+              <p class="small text-secondary mb-3">Use el botón de arriba para crear la primera entrada del menú.</p>
+              <button type="button" class="btn btn-primary rounded-pill" (click)="agregarEnSeccion.emit()">Crear la primera opción</button>
+            </div>
+          } @else {
+            <cdk-tree
+              #menuCdkTree
+              class="menu-op-cdk-tree"
+              [dataSource]="nodes()"
+              [childrenAccessor]="treeChildrenAccessor"
+              [trackBy]="treeTrackBy"
+              [expansionKey]="treeExpansionKey"
+            >
+              <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="menu-op-cdk-node">
+                <div class="menu-op-tree-row" [class.menu-op-tree-row--sub]="node.depth > 0">
+                  @if (node.children.length > 0) {
+                    <button
+                      type="button"
+                      class="menu-op-tree-toggle btn btn-sm btn-light border"
+                      cdkTreeNodeToggle
+                      [attr.aria-label]="'Expandir o contraer «' + node.m.nombre + '»'"
+                    >
+                      <i class="bi bi-chevron-right menu-op-tree-chevron" aria-hidden="true"></i>
+                    </button>
+                  } @else {
+                    <span class="menu-op-tree-toggle-spacer" aria-hidden="true"></span>
+                  }
+                  <span class="menu-op-tree-connector" aria-hidden="true"></span>
+                  <article
+                    class="menu-op-card menu-op-card--tree menu-op-card--dense"
+                    [class.menu-op-card--sub]="node.depth > 0"
+                    [class.menu-op-card--sub-deep]="node.depth > 1"
+                  >
+                    <div class="menu-op-card-gutter" aria-hidden="true"></div>
+                    <div class="menu-op-card-main menu-op-card-main--dense">
+                      <div class="menu-op-tree-row-inner d-flex flex-wrap align-items-center gap-2">
+                        <span class="menu-op-card-icon text-primary" aria-hidden="true">
+                          <i [class]="iconClassBi(node.m.icono)"></i>
+                        </span>
+                        <div class="menu-op-tree-row-text min-w-0 flex-grow-1">
+                          <div class="d-flex flex-wrap align-items-baseline gap-1 gap-md-2">
+                            <span class="menu-op-card-name">{{ node.m.nombre }}</span>
+                            <span class="badge rounded-pill menu-op-card-level menu-op-badge-tight">{{ etiquetaNivel(node.depth) }}</span>
+                          </div>
+                          <div class="menu-op-card-meta menu-op-card-meta--inline d-flex flex-wrap align-items-center gap-1">
+                            <code class="menu-op-code">{{ node.m.codigo }}</code>
+                            <span class="menu-op-meta-sep text-secondary" aria-hidden="true">·</span>
+                            @if (node.m.ruta?.trim()) {
+                              <span class="menu-op-route text-truncate" [title]="node.m.ruta!">{{ node.m.ruta }}</span>
+                            } @else {
+                              <span class="text-secondary menu-op-meta-muted">Sin ruta</span>
+                            }
+                          </div>
+                        </div>
+                        <div class="menu-op-tree-row-tools d-flex flex-wrap align-items-center gap-1 ms-md-auto">
+                          <span class="badge rounded-pill bg-body-secondary text-body-secondary border menu-op-badge-tight" [title]="'Orden ' + node.m.orden"
+                            >#{{ node.m.orden }}</span
+                          >
+                          @if (node.m.activo) {
+                            <span class="badge rounded-pill text-bg-success menu-op-badge-tight" title="Activo">Act.</span>
+                          } @else {
+                            <span class="badge rounded-pill text-bg-secondary menu-op-badge-tight" title="Inactivo">Inac.</span>
+                          }
+                          <div class="btn-group btn-group-sm menu-op-row-actions" role="group" aria-label="Acciones de la opción">
+                            <button type="button" class="btn btn-outline-secondary" title="Anidar opción debajo" (click)="agregarHijoDe.emit(node.m.id)">
+                              <i class="bi bi-node-plus" aria-hidden="true"></i>
+                              <span class="visually-hidden">Anidar</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" title="Editar" (click)="editar.emit(node.m)">
+                              <i class="bi bi-pencil" aria-hidden="true"></i>
+                              <span class="visually-hidden">Editar</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger" title="Eliminar" (click)="eliminar.emit(node.m)">
+                              <i class="bi bi-trash" aria-hidden="true"></i>
+                              <span class="visually-hidden">Eliminar</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <div class="menu-op-tree-children menu-op-tree-children--cdk" role="group">
+                  <ng-container cdkTreeNodeOutlet></ng-container>
+                </div>
+              </cdk-nested-tree-node>
+            </cdk-tree>
+          }
+        </div>
+      </div>
+
+      <footer class="modal-footer menu-op-modal-footer border-top-0 bg-body-tertiary py-2">
+        <span class="small text-secondary me-auto d-none d-md-inline">Editar o crear abre un formulario encima sin cerrar esta ventana.</span>
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" (click)="closed.emit()">Cerrar</button>
+      </footer>
+    </div>
+  </div>
+</div>

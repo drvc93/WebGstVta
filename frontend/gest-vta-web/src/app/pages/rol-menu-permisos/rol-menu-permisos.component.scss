@@ -1,9 +1,17 @@
+:host {
+  display: block;
+}
+
 .rol-perm-toolbar {
   align-items: center;
 }
 
 .rol-perm-rol-select {
   min-width: 14rem;
+}
+
+.rol-perm-hint {
+  max-width: 52rem;
 }
 
 .rol-perm-card {
@@ -14,6 +22,16 @@
   max-height: min(70vh, 42rem);
 }
 
+/* Tabla: opción flexible, permisos en franja compacta */
+.rol-perm-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.rol-perm-col-perm {
+  width: 3.1rem;
+}
+
 .rol-perm-table thead th {
   position: sticky;
   top: 0;
@@ -22,11 +40,160 @@
   box-shadow: 0 1px 0 var(--bs-border-color);
 }
 
-.rol-perm-indent {
-  display: inline-block;
-  width: calc(var(--depth, 0) * 0.85rem);
+.rol-perm-th-opt {
+  padding-left: 0.85rem;
 }
 
-.rol-perm-row--muted {
-  opacity: 0.75;
+.rol-perm-th-perm {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bs-secondary-color);
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  white-space: nowrap;
+}
+
+/* Anular peso global de la primera columna en gest-data-card */
+.rol-perm-card .rol-perm-table tbody td.rol-perm-td-name {
+  font-weight: 400;
+  color: var(--bs-body-color);
+  vertical-align: middle;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.rol-perm-opt {
+  --rol-indent: 1.15rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding-left: calc(var(--depth, 0) * var(--rol-indent));
+  min-width: 0;
+}
+
+.rol-perm-toggle,
+.rol-perm-toggle-spacer {
+  flex: 0 0 1.65rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  margin: 0;
+  padding: 0;
+}
+
+.rol-perm-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--bs-secondary-color);
+  line-height: 1;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.rol-perm-toggle:hover {
+  background: color-mix(in srgb, var(--bs-primary) 12%, transparent);
+  color: var(--bs-primary);
+}
+
+.rol-perm-toggle:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 1px;
+}
+
+.rol-perm-toggle-icon {
+  font-size: 0.95rem;
+}
+
+.rol-perm-toggle-spacer {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.rol-perm-branch {
+  flex: 0 0 0.55rem;
+  width: 0.55rem;
+  margin-top: 0.5rem;
+  height: 0.55rem;
+  border-left: 2px solid var(--bs-border-color);
+  border-bottom: 2px solid var(--bs-border-color);
+  border-radius: 0 0 0 0.2rem;
+  opacity: 0.85;
+}
+
+.rol-perm-opt-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.rol-perm-name {
+  font-weight: 600;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.rol-perm-row--child .rol-perm-name {
+  font-weight: 500;
+}
+
+.rol-perm-code {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.08rem 0.35rem;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--bs-secondary-color);
+  background: color-mix(in srgb, var(--bs-secondary-bg) 88%, transparent);
+  border-radius: 0.25rem;
+  word-break: break-all;
+}
+
+.rol-perm-td-perm {
+  text-align: center;
+  vertical-align: middle;
+  width: 3.1rem;
+  padding: 0.3rem 0.2rem;
+}
+
+.rol-perm-td-perm .form-check-input {
+  margin: 0;
+  float: none;
+  cursor: pointer;
+}
+
+.rol-perm-td-perm .form-check-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+/* Raíz del menú: bloque visual */
+.rol-perm-row--section {
+  background: color-mix(in srgb, var(--bs-tertiary-bg) 65%, transparent);
+}
+
+.rol-perm-row--section .rol-perm-name {
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+
+.rol-perm-row--section + .rol-perm-row--child {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--bs-border-color) 55%, transparent);
+}
+
+.rol-perm-row--muted:not(.rol-perm-row--section) .rol-perm-name {
+  color: var(--bs-secondary-color);
+}
+
+.rol-perm-row--muted.rol-perm-row--section {
+  opacity: 0.92;
 }

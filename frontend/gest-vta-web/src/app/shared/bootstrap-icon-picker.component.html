@@ -1,0 +1,79 @@
+<div class="bi-picker">
+  <div class="bi-picker-row d-flex flex-wrap align-items-stretch gap-2">
+    <div class="bi-picker-preview flex-shrink-0 d-flex align-items-center justify-content-center border rounded-2 bg-body-secondary text-primary" aria-hidden="true">
+      @if (normalizedSlug(icono()); as slug) {
+        <i [class]="biClass(slug)" class="bi-picker-preview-ico"></i>
+      } @else {
+        <i class="bi bi-image bi-picker-preview-ico opacity-25"></i>
+      }
+    </div>
+    <div class="bi-picker-field flex-grow-1 min-w-0">
+      <div class="input-group input-group-sm">
+        <input
+          type="text"
+          class="form-control form-control-sm font-monospace"
+          [value]="icono()"
+          (input)="iconoChange.emit($any($event.target).value)"
+          placeholder="ej. house o bi-house"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="button" class="btn btn-outline-secondary" (click)="togglePanel()" [attr.aria-expanded]="panelOpen()">
+          @if (iconSvc.isLoading()) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          } @else {
+            <i class="bi bi-grid-3x3-gap" aria-hidden="true"></i>
+          }
+          <span class="d-none d-sm-inline ms-1">Explorar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (panelOpen()) {
+    <div class="bi-picker-panel border rounded-2 mt-2 bg-body-tertiary" (click)="$event.stopPropagation()">
+      <div class="bi-picker-panel-head d-flex flex-wrap align-items-center gap-2 p-2 border-bottom">
+        <label class="visually-hidden" for="biPickerSearch">Filtrar iconos</label>
+        <input
+          id="biPickerSearch"
+          type="search"
+          class="form-control form-control-sm flex-grow-1"
+          placeholder="Buscar por nombre…"
+          [value]="search()"
+          (input)="search.set($any($event.target).value)"
+        />
+        <button type="button" class="btn btn-sm btn-outline-secondary text-nowrap" (click)="clearIcon()">Quitar</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="closePanel()" title="Cerrar panel" aria-label="Cerrar panel">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="bi-picker-grid-wrap">
+        @if (iconSvc.isLoading() && filtered().length === 0) {
+          <p class="small text-secondary mb-0 p-3">Cargando catálogo…</p>
+        } @else if (filtered().length === 0) {
+          <p class="small text-secondary mb-0 p-3">Sin coincidencias. Pruebe otro término.</p>
+        } @else {
+          <div class="bi-picker-grid p-2">
+            @for (slug of filtered(); track slug) {
+              <button
+                type="button"
+                class="bi-picker-cell btn btn-light border"
+                [class.active]="normalizedSlug(icono()) === slug"
+                [title]="slug"
+                (click)="pick(slug)"
+              >
+                <i [class]="biClass(slug)" aria-hidden="true"></i>
+              </button>
+            }
+          </div>
+          @if (!search().trim() && iconSvc.iconNames().length > 120) {
+            <p class="small text-secondary px-2 pb-2 mb-0">Mostrando los primeros 120. Escriba en el buscador para acotar.</p>
+          }
+          @if (search().trim() && iconSvc.iconNames().length > 0 && filtered().length >= 200) {
+            <p class="small text-secondary px-2 pb-2 mb-0">Mostrando 200 resultados como máximo. Refine la búsqueda.</p>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

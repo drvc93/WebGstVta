@@ -1,19 +1,23 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { finalize } from 'rxjs';
 import type { MenuOpcion, MenuOpcionSave } from '../../models/api.models';
 import { MenuOpcionService } from '../../services/menu-opcion.service';
 import { ToastService } from '../../core/toast.service';
-
-type Draft = MenuOpcionSave & { id?: number };
+import type { MenuOpcionDraft, MenuOpcionTreeNode } from './menu-opciones.types';
+import { MenuOpcionesFormModalComponent } from './menu-opciones-form-modal/menu-opciones-form-modal.component';
+import { MenuOpcionesTreeModalComponent } from './menu-opciones-tree-modal/menu-opciones-tree-modal.component';
 
 @Component({
   selector: 'app-menu-opciones-list',
+  imports: [MenuOpcionesTreeModalComponent, MenuOpcionesFormModalComponent],
   templateUrl: './menu-opciones-list.component.html',
   styleUrl: './menu-opciones-list.component.scss',
 })
 export class MenuOpcionesListComponent implements OnInit {
   private readonly api = inject(MenuOpcionService);
   private readonly toast = inject(ToastService);
+
+  readonly treeModal = viewChild(MenuOpcionesTreeModalComponent);
 
   readonly rows = signal<MenuOpcion[]>([]);
   readonly loading = signal(true);
@@ -24,7 +28,12 @@ export class MenuOpcionesListComponent implements OnInit {
   /** Al crear desde el modal: `parentId` fijo (no se muestra el combo). */
   readonly padreFijoAlCrear = signal<number | null>(null);
 
-  readonly draft = signal<Draft>(this.emptyDraft());
+  readonly draft = signal<MenuOpcionDraft>(this.emptyDraft());
+
+  readonly padreFijoLabel = computed(() => {
+    const id = this.padreFijoAlCrear();
+    return id != null ? this.nombreOpcion(id) : '';
+  });
 
   /** Solo secciones raíz (`ParentId` nulo), ordenadas. */
   readonly raicesOrdenadas = computed(() =>
@@ -38,11 +47,18 @@ export class MenuOpcionesListComponent implements OnInit {
 
   readonly modalPadre = signal<MenuOpcion | null>(null);
 
-  /** Subárbol bajo el padre del modal (hijos, nietos…), con profundidad relativa. */
-  readonly hijosModalOrdenados = computed(() => {
+  /** Subárbol jerárquico bajo la sección del modal (solo hijos directos del padre en la raíz del array). */
+  readonly arbolModal = computed((): MenuOpcionTreeNode[] => {
     const pad = this.modalPadre();
     if (!pad) return [];
-    return this.subarbolDesde(pad.id);
+    const byParent = this.buildChildrenByParentId();
+    const build = (parentId: number, depth: number): MenuOpcionTreeNode[] =>
+      (byParent.get(parentId) ?? []).map((m) => ({
+        m,
+        depth,
+        children: build(m.id, depth + 1),
+      }));
+    return build(pad.id, 0);
   });
 
   readonly parentOptions = computed(() => {
@@ -85,7 +101,6 @@ export class MenuOpcionesListComponent implements OnInit {
     });
   }
 
-  /** Total de nodos bajo `padreId` (no incluye al padre). */
   contarSubarbol(padreId: number): number {
     return this.subarbolDesde(padreId).length;
   }
@@ -96,9 +111,11 @@ export class MenuOpcionesListComponent implements OnInit {
 
   abrirModalHijos(p: MenuOpcion): void {
     this.modalPadre.set(p);
+    setTimeout(() => this.treeModal()?.expandAll(), 0);
   }
 
   cerrarModalHijos(): void {
+    this.cerrarPanel();
     this.modalPadre.set(null);
   }
 
@@ -110,9 +127,7 @@ export class MenuOpcionesListComponent implements OnInit {
     this.panelOpen.set(true);
   }
 
-  /** Nueva opción colgando del padre indicado (desde el modal). */
   nuevoHijo(padreId: number): void {
-    this.cerrarModalHijos();
     this.editingId.set(null);
     this.padreFijoAlCrear.set(padreId);
     this.draft.set({ ...this.emptyDraft(), parentId: padreId, orden: 0 });
@@ -120,7 +135,6 @@ export class MenuOpcionesListComponent implements OnInit {
   }
 
   editar(m: MenuOpcion): void {
-    this.cerrarModalHijos();
     this.editingId.set(m.id);
     this.padreFijoAlCrear.set(null);
     this.draft.set({
@@ -142,7 +156,7 @@ export class MenuOpcionesListComponent implements OnInit {
     this.padreFijoAlCrear.set(null);
   }
 
-  patchDraft(p: Partial<Draft>): void {
+  patchDraft(p: Partial<MenuOpcionDraft>): void {
     this.draft.update((d) => ({ ...d, ...p }));
   }
 
@@ -220,7 +234,7 @@ export class MenuOpcionesListComponent implements OnInit {
     });
   }
 
-  private emptyDraft(): Draft {
+  private emptyDraft(): MenuOpcionDraft {
     return {
       codigo: '',
       nombre: '',
@@ -232,8 +246,7 @@ export class MenuOpcionesListComponent implements OnInit {
     };
   }
 
-  /** DFS por `orden` e `id` bajo `raizId` (no incluye la raíz). */
-  private subarbolDesde(raizId: number): { m: MenuOpcion; depth: number }[] {
+  private buildChildrenByParentId(): Map<number | null, MenuOpcion[]> {
     const list = [...this.rows()].sort((a, b) => {
       if (a.orden !== b.orden) return a.orden - b.orden;
       return a.id - b.id;
@@ -245,6 +258,11 @@ export class MenuOpcionesListComponent implements OnInit {
       arr.push(m);
       byParent.set(k, arr);
     }
+    return byParent;
+  }
+
+  private subarbolDesde(raizId: number): { m: MenuOpcion; depth: number }[] {
+    const byParent = this.buildChildrenByParentId();
     const out: { m: MenuOpcion; depth: number }[] = [];
     const walk = (parentId: number, depth: number) => {
       const kids = byParent.get(parentId) ?? [];

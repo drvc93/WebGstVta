@@ -39,31 +39,66 @@
     <span>Cargando…</span>
   </div>
 } @else if (!error()) {
-  <p class="small text-secondary mb-2">
+  <p class="small text-secondary mb-2 rol-perm-hint">
     Marque <strong>Leer</strong> para mostrar la opción en el menú (ruta obligatoria en el mantenedor de menú). Los demás permisos pueden usarse luego en pantallas y APIs.
   </p>
   <div class="card gest-panel gest-data-card rol-perm-card">
     <div class="card-body p-0">
       <div class="table-responsive rol-perm-scroll">
         <table class="table table-sm table-hover table-gest mb-0 align-middle rol-perm-table">
+          <colgroup>
+            <col class="rol-perm-col-opt" />
+            <col span="4" class="rol-perm-col-perm" />
+          </colgroup>
           <thead>
             <tr>
-              <th scope="col">Opción</th>
-              <th scope="col" class="text-center">Leer</th>
-              <th scope="col" class="text-center">Crear</th>
-              <th scope="col" class="text-center">Modif.</th>
-              <th scope="col" class="text-center">Elim.</th>
+              <th scope="col" class="rol-perm-th-opt">Opción</th>
+              <th scope="col" class="rol-perm-th-perm" title="Mostrar en menú">Leer</th>
+              <th scope="col" class="rol-perm-th-perm" title="Crear registros">Crear</th>
+              <th scope="col" class="rol-perm-th-perm" title="Modificar registros">Modif.</th>
+              <th scope="col" class="rol-perm-th-perm" title="Eliminar registros">Elim.</th>
             </tr>
           </thead>
           <tbody>
-            @for (row of filasOrdenadas(); track row.f.menuOpcionId) {
-              <tr [class.rol-perm-row--muted]="!row.f.ruta?.trim()">
-                <td>
-                  <span class="rol-perm-indent" [style.--depth]="row.depth"></span>
-                  <span class="fw-medium">{{ row.f.nombre }}</span>
-                  <span class="small text-secondary d-block font-monospace">{{ row.f.codigo }}</span>
+            @for (row of filasVisibles(); track row.f.menuOpcionId) {
+              <tr
+                class="rol-perm-row"
+                [class.rol-perm-row--section]="row.depth === 0"
+                [class.rol-perm-row--child]="row.depth > 0"
+                [class.rol-perm-row--muted]="!row.f.ruta?.trim()"
+              >
+                <td class="rol-perm-td-name">
+                  <div class="rol-perm-opt" [style.--depth]="row.depth" [attr.data-depth]="row.depth">
+                    @if (tieneHijos(row.f.menuOpcionId)) {
+                      <button
+                        type="button"
+                        class="rol-perm-toggle"
+                        (click)="toggleColapso(row.f.menuOpcionId, $event)"
+                        [attr.aria-expanded]="colapsado(row.f.menuOpcionId) ? 'false' : 'true'"
+                        [attr.aria-label]="
+                          (colapsado(row.f.menuOpcionId) ? 'Expandir subopciones de ' : 'Colapsar subopciones de ') + row.f.nombre
+                        "
+                      >
+                        <i
+                          class="bi rol-perm-toggle-icon"
+                          [class.bi-chevron-right]="colapsado(row.f.menuOpcionId)"
+                          [class.bi-chevron-down]="!colapsado(row.f.menuOpcionId)"
+                          aria-hidden="true"
+                        ></i>
+                      </button>
+                    } @else {
+                      <span class="rol-perm-toggle-spacer" aria-hidden="true"></span>
+                    }
+                    @if (row.depth > 0) {
+                      <span class="rol-perm-branch" aria-hidden="true"></span>
+                    }
+                    <div class="rol-perm-opt-main">
+                      <span class="rol-perm-name">{{ row.f.nombre }}</span>
+                      <code class="rol-perm-code">{{ row.f.codigo }}</code>
+                    </div>
+                  </div>
                 </td>
-                <td class="text-center">
+                <td class="rol-perm-td-perm">
                   <input
                     type="checkbox"
                     class="form-check-input"
@@ -72,7 +107,7 @@
                     [attr.aria-label]="'Leer ' + row.f.nombre"
                   />
                 </td>
-                <td class="text-center">
+                <td class="rol-perm-td-perm">
                   <input
                     type="checkbox"
                     class="form-check-input"
@@ -82,7 +117,7 @@
                     [attr.aria-label]="'Crear ' + row.f.nombre"
                   />
                 </td>
-                <td class="text-center">
+                <td class="rol-perm-td-perm">
                   <input
                     type="checkbox"
                     class="form-check-input"
@@ -92,7 +127,7 @@
                     [attr.aria-label]="'Modificar ' + row.f.nombre"
                   />
                 </td>
-                <td class="text-center">
+                <td class="rol-perm-td-perm">
                   <input
                     type="checkbox"
                     class="form-check-input"
@@ -104,7 +139,7 @@
                 </td>
               </tr>
             }
-            @if (filasOrdenadas().length === 0) {
+            @if (filas().length === 0) {
               <tr>
                 <td colspan="5" class="text-center text-secondary py-4">No hay opciones de menú en el sistema.</td>
               </tr>

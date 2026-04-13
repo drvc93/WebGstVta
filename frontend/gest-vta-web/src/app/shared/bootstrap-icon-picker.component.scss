@@ -1,0 +1,50 @@
+.bi-picker-preview {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.bi-picker-preview-ico {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.bi-picker-grid-wrap {
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.bi-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.35rem, 1fr));
+  gap: 0.35rem;
+}
+
+.bi-picker-cell {
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem !important;
+}
+
+.bi-picker-cell i {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.bi-picker-cell:hover {
+  background: color-mix(in srgb, var(--bs-primary) 10%, var(--bs-light)) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+.bi-picker-cell.active {
+  background: rgba(var(--bs-primary-rgb), 0.15) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+html.app-dark .bi-picker-cell,
+[data-bs-theme='dark'] .bi-picker-cell {
+  --bs-light: var(--bs-body-bg);
+}

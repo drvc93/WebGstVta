@@ -24,6 +24,9 @@ export class RolMenuPermisosComponent implements OnInit {
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
 
+  /** IDs de opciones cuyas subopciones están ocultas (plegadas). */
+  readonly seccionesColapsadas = signal<Set<number>>(new Set());
+
   readonly rolesActivos = computed(() =>
     [...this.roles()]
       .filter((r) => r.activo)
@@ -57,6 +60,37 @@ export class RolMenuPermisosComponent implements OnInit {
     return out;
   });
 
+  /** IDs que tienen al menos una fila hija en el menú. */
+  readonly idsConHijos = computed(() => {
+    const s = new Set<number>();
+    for (const f of this.filas()) {
+      if (f.parentId != null) s.add(f.parentId);
+    }
+    return s;
+  });
+
+  readonly parentPorId = computed(() => {
+    const m = new Map<number, number | null>();
+    for (const f of this.filas()) {
+      m.set(f.menuOpcionId, f.parentId ?? null);
+    }
+    return m;
+  });
+
+  readonly filasVisibles = computed(() => {
+    const collapsed = this.seccionesColapsadas();
+    const parentPorId = this.parentPorId();
+    const bajoColapsado = (f: RolMenuPermisoFila): boolean => {
+      let pid: number | null = f.parentId ?? null;
+      while (pid != null) {
+        if (collapsed.has(pid)) return true;
+        pid = parentPorId.get(pid) ?? null;
+      }
+      return false;
+    };
+    return this.filasOrdenadas().filter((row) => !bajoColapsado(row.f));
+  });
+
   ngOnInit(): void {
     this.catalogos.roles().subscribe({
       next: (r) => {
@@ -78,6 +112,7 @@ export class RolMenuPermisosComponent implements OnInit {
   }
 
   cargarFilas(rolId: number): void {
+    this.seccionesColapsadas.set(new Set());
     this.loadingFilas.set(true);
     this.error.set(null);
     this.api.getPorRol(rolId).subscribe({
@@ -93,6 +128,24 @@ export class RolMenuPermisosComponent implements OnInit {
         this.filas.set([]);
         this.loadingFilas.set(false);
       },
+    });
+  }
+
+  tieneHijos(menuOpcionId: number): boolean {
+    return this.idsConHijos().has(menuOpcionId);
+  }
+
+  colapsado(menuOpcionId: number): boolean {
+    return this.seccionesColapsadas().has(menuOpcionId);
+  }
+
+  toggleColapso(menuOpcionId: number, event?: Event): void {
+    event?.stopPropagation();
+    this.seccionesColapsadas.update((prev) => {
+      const next = new Set(prev);
+      if (next.has(menuOpcionId)) next.delete(menuOpcionId);
+      else next.add(menuOpcionId);
+      return next;
     });
   }
 

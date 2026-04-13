@@ -17,113 +17,6 @@
   </button>
 </div>
 
-@if (panelOpen()) {
-  <div class="card gest-panel mb-3 menu-op-panel">
-    <div class="card-header d-flex align-items-center justify-content-between py-2">
-      <span class="fw-semibold">{{ editingId() == null ? 'Nueva opción' : 'Editar opción' }}</span>
-      <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" (click)="cerrarPanel()">Cerrar</button>
-    </div>
-    <div class="card-body">
-      <div class="row g-2">
-        <div class="col-md-3">
-          <label class="form-label small mb-0" for="moCodigo">Código</label>
-          <input
-            id="moCodigo"
-            class="form-control form-control-sm"
-            [value]="draft().codigo"
-            (input)="patchDraft({ codigo: $any($event.target).value })"
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-5">
-          <label class="form-label small mb-0" for="moNombre">Nombre</label>
-          <input
-            id="moNombre"
-            class="form-control form-control-sm"
-            [value]="draft().nombre"
-            (input)="patchDraft({ nombre: $any($event.target).value })"
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-4">
-          <label class="form-label small mb-0" for="moPadre">Padre</label>
-          @if (padreFijoAlCrear() != null && editingId() == null) {
-            <div id="moPadre" class="form-control form-control-sm bg-body-secondary text-secondary">
-              {{ nombreOpcion(padreFijoAlCrear()!) }}
-            </div>
-          } @else if (editingId() == null && padreFijoAlCrear() == null) {
-            <div id="moPadre" class="form-control form-control-sm bg-body-secondary text-secondary">— Raíz (sección principal) —</div>
-          } @else {
-            <select
-              id="moPadre"
-              class="form-select form-select-sm"
-              [value]="draft().parentId == null ? '' : (draft().parentId + '')"
-              (change)="patchDraft({ parentId: $any($event.target).value === '' ? null : +$any($event.target).value })"
-            >
-              <option value="">— Raíz —</option>
-              @for (p of parentOptions(); track p.id) {
-                <option [value]="p.id">{{ p.codigo }} — {{ p.nombre }}</option>
-              }
-            </select>
-          }
-        </div>
-        <div class="col-md-4">
-          <label class="form-label small mb-0" for="moRuta">Ruta (Angular)</label>
-          <input
-            id="moRuta"
-            class="form-control form-control-sm font-monospace"
-            [value]="draft().ruta ?? ''"
-            (input)="patchDraft({ ruta: $any($event.target).value })"
-            placeholder="/maestros/ejemplo"
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-3">
-          <label class="form-label small mb-0" for="moIcono">Icono Bootstrap</label>
-          <input
-            id="moIcono"
-            class="form-control form-control-sm"
-            [value]="draft().icono ?? ''"
-            (input)="patchDraft({ icono: $any($event.target).value })"
-            placeholder="bi-list"
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-2">
-          <label class="form-label small mb-0" for="moOrden">Orden</label>
-          <input
-            id="moOrden"
-            type="number"
-            class="form-control form-control-sm"
-            [value]="draft().orden"
-            (input)="patchDraft({ orden: +$any($event.target).value })"
-          />
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              id="moActivo"
-              [checked]="draft().activo"
-              (change)="patchDraft({ activo: $any($event.target).checked })"
-            />
-            <label class="form-check-label small" for="moActivo">Activo</label>
-          </div>
-        </div>
-      </div>
-      <div class="mt-3 d-flex gap-2">
-        <button type="button" class="btn btn-primary btn-sm rounded-pill px-3" (click)="guardar()" [disabled]="saving()">
-          @if (saving()) {
-            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-          }
-          Guardar
-        </button>
-      </div>
-    </div>
-  </div>
-}
-
 @if (loading()) {
   <div class="gest-loading-panel" role="status" aria-live="polite">
     <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
@@ -192,86 +85,29 @@
 }
 
 @if (modalPadre(); as pad) {
-  <div
-    class="menu-op-modal-backdrop"
-    role="dialog"
-    aria-modal="true"
-    [attr.aria-labelledby]="'menu-op-modal-title'"
-    (click)="cerrarModalHijos()"
-  >
-    <div class="modal-dialog modal-lg modal-dialog-scrollable shadow" (click)="$event.stopPropagation()">
-      <div class="modal-content">
-        <div class="modal-header py-2">
-          <div>
-            <h2 id="menu-op-modal-title" class="modal-title h5 mb-0">Sub-opciones</h2>
-            <p class="small text-secondary mb-0">Sección: <strong>{{ pad.nombre }}</strong> ({{ pad.codigo }})</p>
-          </div>
-          <button type="button" class="btn-close" (click)="cerrarModalHijos()" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body pt-2">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-            <p class="small text-secondary mb-0">Incluye hijos, nietos, etc., ordenados por jerarquía.</p>
-            <button type="button" class="btn btn-primary btn-sm rounded-pill" (click)="nuevoHijo(pad.id)">
-              <i class="bi bi-plus-lg" aria-hidden="true"></i>
-              Nueva bajo «{{ pad.nombre }}»
-            </button>
-          </div>
-          <div class="table-responsive border rounded">
-            <table class="table table-sm table-hover mb-0 align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">Opción</th>
-                  <th scope="col">Código</th>
-                  <th scope="col">Ruta</th>
-                  <th scope="col">Orden</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col" class="text-end">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (row of hijosModalOrdenados(); track row.m.id) {
-                  <tr>
-                    <td>
-                      <span class="menu-op-indent" [style.--depth]="row.depth"></span>
-                      <span>{{ row.m.nombre }}</span>
-                    </td>
-                    <td class="small font-monospace">{{ row.m.codigo }}</td>
-                    <td class="small font-monospace text-secondary">{{ row.m.ruta || '—' }}</td>
-                    <td>{{ row.m.orden }}</td>
-                    <td>
-                      @if (row.m.activo) {
-                        <span class="badge text-bg-success">Activo</span>
-                      } @else {
-                        <span class="badge text-bg-secondary">Inactivo</span>
-                      }
-                    </td>
-                    <td class="text-end text-nowrap">
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary btn-sm rounded-pill me-1 py-0"
-                        title="Nueva opción bajo esta fila"
-                        (click)="nuevoHijo(row.m.id)"
-                      >
-                        <i class="bi bi-node-plus" aria-hidden="true"></i>
-                      </button>
-                      <button type="button" class="btn btn-outline-primary btn-sm rounded-pill me-1" (click)="editar(row.m)">Editar</button>
-                      <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" (click)="eliminar(row.m)">Eliminar</button>
-                    </td>
-                  </tr>
-                }
-                @if (hijosModalOrdenados().length === 0) {
-                  <tr>
-                    <td colspan="6" class="text-center text-secondary py-4">No hay sub-opciones. Pulse «Nueva bajo…» para agregar la primera.</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="modal-footer py-2">
-          <button type="button" class="btn btn-secondary btn-sm rounded-pill" (click)="cerrarModalHijos()">Cerrar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-menu-opciones-tree-modal
+    #treeModal
+    [seccion]="pad"
+    [nodes]="arbolModal()"
+    [totalEnArbol]="contarSubarbol(pad.id)"
+    (closed)="cerrarModalHijos()"
+    (agregarEnSeccion)="nuevoHijo(pad.id)"
+    (agregarHijoDe)="nuevoHijo($event)"
+    (editar)="editar($event)"
+    (eliminar)="eliminar($event)"
+  />
+}
+
+@if (panelOpen()) {
+  <app-menu-opciones-form-modal
+    [editingId]="editingId()"
+    [draft]="draft()"
+    [padreFijoAlCrear]="padreFijoAlCrear()"
+    [padreFijoNombre]="padreFijoLabel()"
+    [parentOptions]="parentOptions()"
+    [saving]="saving()"
+    (closed)="cerrarPanel()"
+    (draftPatch)="patchDraft($event)"
+    (saveRequested)="guardar()"
+  />
 }
