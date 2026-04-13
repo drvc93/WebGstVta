@@ -12,10 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestVta.Api.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413050000_AddMenuOpcionRolMenuPermiso")]
+    partial class AddMenuOpcionRolMenuPermiso
     {
         /// <inheritdoc />
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -412,6 +413,51 @@ namespace GestVta.Api.Data.Migrations
                     b.ToTable("Marca", (string)null);
                 });
 
+            modelBuilder.Entity("GestVta.Api.Models.MenuOpcion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Icono")
+                        .HasMaxLength(96)
+                        .HasColumnType("nvarchar(96)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Orden")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Ruta")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("MenuOpcion", (string)null);
+                });
+
             modelBuilder.Entity("GestVta.Api.Models.Modelo", b =>
                 {
                     b.Property<int>("Id")
@@ -611,6 +657,33 @@ namespace GestVta.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Rol", (string)null);
+                });
+
+            modelBuilder.Entity("GestVta.Api.Models.RolMenuPermiso", b =>
+                {
+                    b.Property<int>("RolId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MenuOpcionId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("PuedeEliminar")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PuedeEscribir")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PuedeLeer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PuedeModificar")
+                        .HasColumnType("bit");
+
+                    b.HasKey("RolId", "MenuOpcionId");
+
+                    b.HasIndex("MenuOpcionId");
+
+                    b.ToTable("RolMenuPermiso", (string)null);
                 });
 
             modelBuilder.Entity("GestVta.Api.Models.RptaSeguimiento", b =>
@@ -833,6 +906,21 @@ namespace GestVta.Api.Data.Migrations
                     b.ToTable("Usuario", (string)null);
                 });
 
+            modelBuilder.Entity("GestVta.Api.Models.UsuarioCompania", b =>
+                {
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompaniaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UsuarioId", "CompaniaId");
+
+                    b.HasIndex("CompaniaId");
+
+                    b.ToTable("UsuarioCompania", (string)null);
+                });
+
             modelBuilder.Entity("GestVta.Api.Models.UsuarioRol", b =>
                 {
                     b.Property<int>("UsuarioId")
@@ -930,6 +1018,35 @@ namespace GestVta.Api.Data.Migrations
                     b.Navigation("Marca");
                 });
 
+            modelBuilder.Entity("GestVta.Api.Models.MenuOpcion", b =>
+                {
+                    b.HasOne("GestVta.Api.Models.MenuOpcion", "Parent")
+                        .WithMany("Hijos")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("GestVta.Api.Models.RolMenuPermiso", b =>
+                {
+                    b.HasOne("GestVta.Api.Models.MenuOpcion", "MenuOpcion")
+                        .WithMany("RolMenuPermisos")
+                        .HasForeignKey("MenuOpcionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestVta.Api.Models.Rol", "Rol")
+                        .WithMany("RolMenuPermisos")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuOpcion");
+
+                    b.Navigation("Rol");
+                });
+
             modelBuilder.Entity("GestVta.Api.Models.Proveedor", b =>
                 {
                     b.HasOne("GestVta.Api.Models.TipoDocumento", "TipoDocumento")
@@ -962,6 +1079,25 @@ namespace GestVta.Api.Data.Migrations
                     b.Navigation("Compania");
                 });
 
+            modelBuilder.Entity("GestVta.Api.Models.UsuarioCompania", b =>
+                {
+                    b.HasOne("GestVta.Api.Models.Compania", "Compania")
+                        .WithMany()
+                        .HasForeignKey("CompaniaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestVta.Api.Models.Usuario", "Usuario")
+                        .WithMany("UsuarioCompanias")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Compania");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("GestVta.Api.Models.UsuarioRol", b =>
                 {
                     b.HasOne("GestVta.Api.Models.Rol", "Rol")
@@ -981,13 +1117,24 @@ namespace GestVta.Api.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("GestVta.Api.Models.MenuOpcion", b =>
+                {
+                    b.Navigation("Hijos");
+
+                    b.Navigation("RolMenuPermisos");
+                });
+
             modelBuilder.Entity("GestVta.Api.Models.Rol", b =>
                 {
+                    b.Navigation("RolMenuPermisos");
+
                     b.Navigation("UsuarioRoles");
                 });
 
             modelBuilder.Entity("GestVta.Api.Models.Usuario", b =>
                 {
+                    b.Navigation("UsuarioCompanias");
+
                     b.Navigation("UsuarioRoles");
                 });
 #pragma warning restore 612, 618

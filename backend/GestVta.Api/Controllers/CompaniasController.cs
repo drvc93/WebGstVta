@@ -1,14 +1,22 @@
 using GestVta.Api.Data;
+using GestVta.Api.Infrastructure;
 using GestVta.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestVta.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
-public class CompaniasController(ApplicationDbContext db) : ControllerBase
+public sealed class CompaniasController(ApplicationDbContext db, FileStoragePaths filePaths) : ControllerBase
 {
+    private static readonly HashSet<string> LogoExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg",
+    };
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Compania>>> GetAll(CancellationToken ct)
     {
@@ -20,6 +28,31 @@ public class CompaniasController(ApplicationDbContext db) : ControllerBase
     {
         var e = await db.Companias.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id, ct);
         return e is null ? NotFound() : e;
+    }
+
+    /// <summary>Sube el logo de compañía a FileStorage:RootPath/companias y devuelve la ruta web para LogoPath.</summary>
+    [HttpPost("logo")]
+    [RequestSizeLimit(10 * 1024 * 1024)]
+    public async Task<ActionResult<LogoUploadResponse>> UploadLogo(IFormFile file, CancellationToken ct)
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest(new { message = "No se envió ningún archivo." });
+
+        var ext = Path.GetExtension(file.FileName);
+        if (string.IsNullOrEmpty(ext) || !LogoExtensions.Contains(ext))
+            return BadRequest(new { message = "Solo se permiten imágenes: png, jpg, jpeg, gif, webp, svg." });
+
+        if (!string.IsNullOrEmpty(file.ContentType) && !file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            return BadRequest(new { message = "El contenido debe ser una imagen." });
+
+        Directory.CreateDirectory(filePaths.CompaniasPhysical);
+        var safeName = $"{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
+        var physical = Path.Combine(filePaths.CompaniasPhysical, safeName);
+        await using (var stream = System.IO.File.Create(physical))
+            await file.CopyToAsync(stream, ct);
+
+        var webPath = filePaths.WebPathForCompaniaLogo(safeName);
+        return Ok(new LogoUploadResponse(webPath));
     }
 
     [HttpPost]
@@ -67,4 +100,6 @@ public class CompaniasController(ApplicationDbContext db) : ControllerBase
         await db.SaveChangesAsync(ct);
         return NoContent();
     }
+
+    public sealed record LogoUploadResponse(string Path);
 }

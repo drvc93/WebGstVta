@@ -28,4 +28,11 @@ export class CompaniaService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
+
+  /** Sube logo a FileStorage del servidor; devuelve la ruta web (p. ej. /files/companias/....png) para LogoPath. */
+  uploadLogo(file: File): Observable<{ path: string }> {
+    const fd = new FormData();
+    fd.append('file', file, file.name);
+    return this.http.post<{ path: string }>(`${this.base}/logo`, fd);
+  }
 }

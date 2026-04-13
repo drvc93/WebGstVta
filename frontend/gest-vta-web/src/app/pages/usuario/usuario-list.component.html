@@ -1,0 +1,200 @@
+<div class="page-head gest-page-head d-flex flex-wrap align-items-baseline justify-content-between gap-2">
+  <h1 class="h3 mb-0 gest-page-title">Usuarios</h1>
+  <nav class="crumbs small text-secondary d-flex align-items-center gap-1" aria-label="Miga de pan">
+    <i class="bi bi-folder2" aria-hidden="true"></i>
+    <span>Maestros / Usuarios</span>
+  </nav>
+</div>
+
+@if (error()) {
+  <p class="error alert alert-danger py-2 px-3">{{ error() }}</p>
+}
+
+<div class="toolbar gest-toolbar d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+  <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1 rounded-pill px-3" (click)="nuevo()">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Nuevo
+  </button>
+  <div class="usuario-search input-group input-group-sm">
+    <span class="input-group-text usuario-search-icon" aria-hidden="true">
+      <i class="bi bi-search"></i>
+    </span>
+    <input
+      type="search"
+      class="form-control usuario-search-input"
+      placeholder="Buscar por usuario, nombre, roles…"
+      autocomplete="off"
+      [value]="searchText()"
+      (input)="setSearch($any($event.target).value)"
+      aria-label="Buscar usuarios"
+    />
+    @if (searchText()) {
+      <button type="button" class="btn btn-outline-secondary usuario-search-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="gest-loading-panel" role="status" aria-live="polite">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span>Cargando usuarios…</span>
+  </div>
+} @else {
+  <div class="card gest-panel gest-data-card usuario-table-card">
+    <div class="card-body p-0">
+      <div class="table-responsive usuario-table-wrap">
+        <table class="table table-hover table-gest usuario-table mb-0 align-middle">
+          <thead>
+            <tr>
+              <th scope="col" class="usuario-th-sort" (click)="toggleSort('username')">
+                <span class="usuario-th-text">Usuario</span>
+                @switch (sortIconState('username')) {
+                  @case ('asc') {
+                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @case ('desc') {
+                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @default {
+                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                  }
+                }
+              </th>
+              <th scope="col" class="usuario-th-sort" (click)="toggleSort('nombreMostrar')">
+                <span class="usuario-th-text">Nombre</span>
+                @switch (sortIconState('nombreMostrar')) {
+                  @case ('asc') {
+                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @case ('desc') {
+                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @default {
+                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                  }
+                }
+              </th>
+              <th scope="col" class="usuario-th-static"><span class="usuario-th-text">Compañías</span></th>
+              <th scope="col" class="usuario-th-static"><span class="usuario-th-text">Roles</span></th>
+              <th scope="col" class="usuario-th-sort" (click)="toggleSort('activo')">
+                <span class="usuario-th-text">Estado</span>
+                @switch (sortIconState('activo')) {
+                  @case ('asc') {
+                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @case ('desc') {
+                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @default {
+                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                  }
+                }
+              </th>
+              <th scope="col" class="usuario-th-sort" (click)="toggleSort('fechaCreacion')">
+                <span class="usuario-th-text">Alta</span>
+                @switch (sortIconState('fechaCreacion')) {
+                  @case ('asc') {
+                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @case ('desc') {
+                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                  }
+                  @default {
+                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                  }
+                }
+              </th>
+              <th scope="col" class="text-end usuario-th-static usuario-th-action">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of pageRows(); track u.id) {
+              <tr>
+                <td class="usuario-code">{{ u.username }}</td>
+                <td [title]="u.nombreMostrar">{{ u.nombreMostrar }}</td>
+                <td class="usuario-meta small">{{ companiasLabel(u) }}</td>
+                <td class="usuario-meta small">{{ rolesLabel(u) }}</td>
+                <td>
+                  @if (u.activo) {
+                    <span class="badge usuario-badge usuario-badge--ok">Activo</span>
+                  } @else {
+                    <span class="badge usuario-badge usuario-badge--off">Inactivo</span>
+                  }
+                </td>
+                <td class="usuario-meta">{{ u.fechaCreacion | date: 'dd/MM/yyyy' }}</td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 rounded-pill px-2"
+                    title="Editar"
+                    (click)="editar(u.id)"
+                  >
+                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                    Editar
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (pageRows().length === 0) {
+              <tr>
+                <td colspan="7" class="gest-empty-cell">
+                  @if (rows().length === 0) {
+                    <div class="gest-empty-state">
+                      <i class="bi bi-inbox" aria-hidden="true"></i>
+                      <span class="gest-empty-title">No hay usuarios</span>
+                      <p class="gest-empty-hint">Pulse <strong>Nuevo</strong> para registrar el primero.</p>
+                    </div>
+                  } @else if (searchText().trim()) {
+                    <div class="gest-empty-state">
+                      <i class="bi bi-search" aria-hidden="true"></i>
+                      <span class="gest-empty-title">Sin resultados</span>
+                      <p class="gest-empty-hint mb-2">Ningún usuario coincide con la búsqueda.</p>
+                      <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" (click)="clearSearch()">Limpiar búsqueda</button>
+                    </div>
+                  } @else {
+                    <div class="gest-empty-state">
+                      <span class="gest-empty-title">Sin datos en esta página</span>
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer usuario-pager d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+      <div class="d-flex align-items-center gap-2">
+        <label class="small mb-0 text-secondary fw-medium" for="usuarioPageSizeSel">Filas por página</label>
+        <select
+          id="usuarioPageSizeSel"
+          class="form-select form-select-sm usuario-page-size"
+          [value]="pageSize()"
+          (change)="setPageSize(+$any($event.target).value)"
+        >
+          @for (n of pageSizeOptions; track n) {
+            <option [value]="n">{{ n }}</option>
+          }
+        </select>
+      </div>
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        <span class="small usuario-pager-info">
+          Página <strong>{{ pageIndex() + 1 }}</strong> de <strong>{{ totalPages() }}</strong>
+          <span class="text-secondary"> · {{ sortedRows().length }} registros</span>
+        </span>
+        <div class="btn-group" role="group" aria-label="Paginación">
+          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="pageIndex() === 0" (click)="prevPage()">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            Anterior
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="pageIndex() >= totalPages() - 1" (click)="nextPage()">
+            Siguiente
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

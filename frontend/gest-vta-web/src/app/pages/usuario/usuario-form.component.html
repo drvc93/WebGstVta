@@ -1,0 +1,154 @@
+<div class="page-head gest-page-head d-flex flex-wrap align-items-baseline justify-content-between gap-2">
+  <h1 class="h3 mb-0 gest-page-title">{{ isEdit() ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
+  <nav class="crumbs small text-secondary d-flex align-items-center gap-1" aria-label="Miga de pan">
+    <i class="bi bi-folder2" aria-hidden="true"></i>
+    <span>Maestros / Usuarios</span>
+  </nav>
+</div>
+
+@if (loading()) {
+  <div class="gest-loading-panel" role="status">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span>Cargando…</span>
+  </div>
+} @else {
+  <div class="card gest-panel usuario-form-card">
+    <div class="card-body usuario-form-body">
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <section class="usuario-form-section" aria-labelledby="usuario-datos-title">
+          <div class="usuario-form-section__head">
+            <h2 id="usuario-datos-title" class="usuario-form-section__title">
+              <i class="bi bi-person-lines-fill usuario-form-section__icon" aria-hidden="true"></i>
+              Datos generales
+            </h2>
+          </div>
+          <div class="usuario-form-fields">
+            <div class="usuario-form-field">
+              <label class="form-label" for="uUsername">Usuario</label>
+              <input id="uUsername" class="form-control" formControlName="username" autocomplete="username" />
+              @if (form.controls.username.touched && form.controls.username.invalid) {
+                <div class="invalid-feedback d-block">Obligatorio.</div>
+              }
+            </div>
+            <div class="usuario-form-field usuario-form-field--password">
+              <label class="form-label" for="uPassword">Contraseña</label>
+              <input id="uPassword" type="password" class="form-control" formControlName="password" autocomplete="new-password" />
+              @if (isEdit()) {
+                <p class="usuario-form-hint mb-0">Deje en blanco para no cambiar la contraseña.</p>
+              } @else {
+                <p class="usuario-form-hint mb-0">Mínimo 4 caracteres.</p>
+              }
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                <div class="invalid-feedback d-block">Obligatoria al crear; mínimo 4 caracteres.</div>
+              }
+            </div>
+            <div class="usuario-form-field">
+              <label class="form-label" for="uNombre">Nombre a mostrar</label>
+              <input id="uNombre" class="form-control" formControlName="nombreMostrar" autocomplete="name" />
+              @if (form.controls.nombreMostrar.touched && form.controls.nombreMostrar.invalid) {
+                <div class="invalid-feedback d-block">Obligatorio.</div>
+              }
+            </div>
+          </div>
+          <div class="usuario-form-switch">
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" role="switch" id="uActivo" formControlName="activo" />
+              <label class="form-check-label" for="uActivo">Usuario activo</label>
+            </div>
+          </div>
+        </section>
+
+        <section class="usuario-form-section" aria-labelledby="usuario-companias-title">
+          <div class="usuario-form-section__head">
+            <h2 id="usuario-companias-title" class="usuario-form-section__title">
+              <i class="bi bi-buildings usuario-form-section__icon" aria-hidden="true"></i>
+              Compañías asociadas
+            </h2>
+            <p class="usuario-form-section__lead">
+              La <strong>primera</strong> de la lista es la compañía predeterminada al iniciar sesión. Use las flechas para reordenar.
+            </p>
+          </div>
+          <div class="usuario-form-subpanel">
+            <label class="form-label small text-secondary mb-1" for="usuarioAddCompania">Añadir compañía</label>
+            <select
+              id="usuarioAddCompania"
+              class="form-select usuario-form-select-add"
+              (change)="onAgregarCompania($any($event.target))"
+            >
+              <option value="">Seleccione una compañía…</option>
+              @for (c of companiasParaAgregar(); track c.id) {
+                <option [value]="c.id">{{ c.codigo }} — {{ c.nombre }}</option>
+              }
+            </select>
+            @if (companiaIdsOrden().length === 0) {
+              <p class="usuario-form-empty small text-muted mb-0 mt-3">Ninguna compañía asociada (opcional).</p>
+            } @else {
+              <ul class="usuario-compania-list mt-3">
+                @for (cid of companiaIdsOrden(); track cid; let idx = $index) {
+                  <li class="usuario-compania-item">
+                    <span class="usuario-compania-item__order" aria-hidden="true">{{ idx + 1 }}</span>
+                    <span class="usuario-compania-item__label">{{ companiaLabel(cid) }}</span>
+                    <div class="usuario-compania-item__actions btn-group" role="group" aria-label="Orden y quitar">
+                      <button type="button" class="btn btn-outline-secondary" [disabled]="idx === 0" (click)="moverCompania(cid, -1)" title="Subir">
+                        <i class="bi bi-chevron-up" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        [disabled]="idx >= companiaIdsOrden().length - 1"
+                        (click)="moverCompania(cid, 1)"
+                        title="Bajar"
+                      >
+                        <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" (click)="quitarCompania(cid)" title="Quitar de la lista">
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </section>
+
+        <section class="usuario-form-section" aria-labelledby="usuario-roles-title">
+          <div class="usuario-form-section__head">
+            <h2 id="usuario-roles-title" class="usuario-form-section__title">
+              <i class="bi bi-shield-check usuario-form-section__icon" aria-hidden="true"></i>
+              Roles
+            </h2>
+            <p class="usuario-form-section__lead mb-0">Marque al menos un rol para el usuario.</p>
+          </div>
+          <div class="usuario-roles-grid">
+            @for (r of rolesActivos(); track r.id) {
+              <label class="usuario-role-tile" [for]="'rol-' + r.id">
+                <input
+                  class="form-check-input usuario-role-tile__input"
+                  type="checkbox"
+                  [id]="'rol-' + r.id"
+                  [checked]="isRolChecked(r.id)"
+                  (change)="toggleRol(r.id, $any($event.target).checked)"
+                />
+                <span class="usuario-role-tile__text">
+                  <span class="usuario-role-tile__name">{{ r.nombre }}</span>
+                  <span class="usuario-role-tile__code">{{ r.codigo }}</span>
+                </span>
+              </label>
+            }
+          </div>
+        </section>
+
+        <footer class="usuario-form-footer">
+          <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="saving()">
+            @if (saving()) {
+              <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+            }
+            Guardar
+          </button>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="volver()" [disabled]="saving()">Cancelar</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}

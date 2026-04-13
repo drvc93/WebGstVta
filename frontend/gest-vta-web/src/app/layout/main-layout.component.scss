@@ -35,6 +35,14 @@ $sidebar-ease: cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 
+/* Oscuro: barra lateral = casi negro + matiz del primario (variables --gest-sidebar-dark-* desde BrandThemeService). */
+:host-context(html.app-dark) .layout-sidebar {
+  background: linear-gradient(
+    180deg,
+    var(--gest-sidebar-dark-start, var(--gest-navy-950)) 0%,
+    var(--gest-sidebar-dark-end, var(--gest-navy-950)) 100%
+  ) !important;
+}
 
 .brand {
   padding: 0.35rem 0.5rem 1rem;
@@ -273,7 +281,7 @@ $sidebar-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :host-context(html.app-dark) .layout-main {
-  background: var(--bs-body-bg);
+  background: color-mix(in srgb, var(--bs-primary) 6%, var(--bs-body-bg));
 }
 
 :host-context(html.app-dark) .layout-topbar {
@@ -332,4 +340,93 @@ $sidebar-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
 .min-w-0 {
   min-width: 0;
+}
+
+/* Cambiar compañía (topbar) */
+.layout-compania-switch-trigger {
+  max-width: 14rem;
+
+  &--open {
+    background: color-mix(in srgb, var(--bs-primary) 8%, var(--gest-white, #fff));
+    border-color: color-mix(in srgb, var(--bs-primary) 35%, var(--gest-border-light));
+  }
+}
+
+.layout-compania-switch-label {
+  max-width: 8rem;
+  vertical-align: bottom;
+}
+
+.layout-compania-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  min-width: 15.5rem;
+  max-width: min(20rem, calc(100vw - 2rem));
+  z-index: 1060;
+  border-radius: var(--gest-radius-md, 0.5rem);
+  background: var(--gest-white, #fff);
+  animation: layout-compania-panel-in 0.18s ease-out;
+}
+
+@keyframes layout-compania-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host-context(html.app-dark) .layout-compania-panel {
+  background: var(--bs-body-bg);
+  border: 1px solid var(--gest-border-light) !important;
+}
+
+.layout-compania-panel-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gest-navy-900) 48%, transparent);
+}
+
+.layout-compania-panel-item {
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  margin-bottom: 0.15rem;
+  border: 1px solid transparent;
+  color: inherit;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bs-primary) 7%, var(--gest-white, #fff));
+    border-color: color-mix(in srgb, var(--bs-primary) 18%, transparent);
+  }
+
+  &--current {
+    background: color-mix(in srgb, var(--bs-primary) 6%, var(--gest-white, #fff));
+    border-color: color-mix(in srgb, var(--bs-primary) 15%, transparent);
+  }
+}
+
+:host-context(html.app-dark) .layout-compania-panel-item {
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bs-primary) 14%, var(--bs-body-bg));
+  }
+
+  &--current {
+    background: color-mix(in srgb, var(--bs-primary) 16%, var(--bs-body-bg));
+  }
+}
+
+.layout-compania-panel-swatch {
+  width: 0.35rem;
+  height: 2rem;
+  min-width: 0.35rem;
 }

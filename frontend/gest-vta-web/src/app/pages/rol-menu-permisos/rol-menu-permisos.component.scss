@@ -1,0 +1,32 @@
+.rol-perm-toolbar {
+  align-items: center;
+}
+
+.rol-perm-rol-select {
+  min-width: 14rem;
+}
+
+.rol-perm-card {
+  border-radius: 0.75rem;
+}
+
+.rol-perm-scroll {
+  max-height: min(70vh, 42rem);
+}
+
+.rol-perm-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bs-body-bg);
+  box-shadow: 0 1px 0 var(--bs-border-color);
+}
+
+.rol-perm-indent {
+  display: inline-block;
+  width: calc(var(--depth, 0) * 0.85rem);
+}
+
+.rol-perm-row--muted {
+  opacity: 0.75;
+}

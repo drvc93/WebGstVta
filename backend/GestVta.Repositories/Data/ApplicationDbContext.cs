@@ -8,6 +8,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Rol> Roles => Set<Rol>();
     public DbSet<Usuario> Usuarios => Set<Usuario>();
     public DbSet<UsuarioRol> UsuarioRoles => Set<UsuarioRol>();
+    public DbSet<UsuarioCompania> UsuarioCompanias => Set<UsuarioCompania>();
     public DbSet<TipoDocumento> TiposDocumento => Set<TipoDocumento>();
     public DbSet<Pais> Paises => Set<Pais>();
     public DbSet<Ubigeo> Ubigeos => Set<Ubigeo>();
@@ -29,6 +30,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Conductor> Conductores => Set<Conductor>();
     public DbSet<Proveedor> Proveedores => Set<Proveedor>();
     public DbSet<Item> Items => Set<Item>();
+    public DbSet<MenuOpcion> MenuOpciones => Set<MenuOpcion>();
+    public DbSet<RolMenuPermiso> RolMenuPermisos => Set<RolMenuPermiso>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,6 +82,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasOne(ur => ur.Rol).WithMany(r => r.UsuarioRoles).HasForeignKey(ur => ur.RolId);
         });
 
+        modelBuilder.Entity<UsuarioCompania>(e =>
+        {
+            e.ToTable("UsuarioCompania");
+            e.HasKey(x => new { x.UsuarioId, x.CompaniaId });
+            e.HasOne(x => x.Usuario).WithMany(u => u.UsuarioCompanias).HasForeignKey(x => x.UsuarioId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Compania).WithMany().HasForeignKey(x => x.CompaniaId).OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<TipoCambio>(e =>
         {
             e.Property(t => t.ValorCompra).HasPrecision(18, 4);
@@ -115,6 +126,35 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasOne(i => i.Unidad).WithMany().HasForeignKey(i => i.UnidadId);
             e.HasOne(i => i.Familia).WithMany().HasForeignKey(i => i.FamiliaId);
             e.HasOne(i => i.Modelo).WithMany().HasForeignKey(i => i.ModeloId);
+        });
+
+        modelBuilder.Entity<MenuOpcion>(e =>
+        {
+            e.ToTable("MenuOpcion");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Codigo).HasMaxLength(64).IsRequired();
+            e.Property(x => x.Nombre).HasMaxLength(150).IsRequired();
+            e.Property(x => x.Ruta).HasMaxLength(512);
+            e.Property(x => x.Icono).HasMaxLength(96);
+            e.HasIndex(x => x.Codigo).IsUnique();
+            e.HasOne(x => x.Parent)
+                .WithMany(x => x.Hijos)
+                .HasForeignKey(x => x.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<RolMenuPermiso>(e =>
+        {
+            e.ToTable("RolMenuPermiso");
+            e.HasKey(x => new { x.RolId, x.MenuOpcionId });
+            e.HasOne(x => x.Rol)
+                .WithMany(r => r.RolMenuPermisos)
+                .HasForeignKey(x => x.RolId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.MenuOpcion)
+                .WithMany(m => m.RolMenuPermisos)
+                .HasForeignKey(x => x.MenuOpcionId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

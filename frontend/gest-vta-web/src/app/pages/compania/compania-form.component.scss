@@ -39,15 +39,20 @@
 }
 
 .logo-preview {
-  max-width: 220px;
-  border-radius: 0.35rem;
+  width: 88px;
+  height: 88px;
+  border-radius: 0.5rem;
   overflow: hidden;
   border: 1px solid var(--bs-border-color);
+  margin-bottom: 0.25rem;
+  background: color-mix(in srgb, var(--bs-body-bg) 85%, #fff 15%);
+  cursor: zoom-in;
 
   img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
@@ -58,5 +63,23 @@
 
 .gest-confirm-modal {
   z-index: 1050;
+}
+
+.gest-image-backdrop {
+  z-index: 1060;
+}
+
+.gest-image-modal {
+  z-index: 1070;
+}
+
+.logo-viewer-image {
+  display: block;
+  width: 100%;
+  max-height: min(72vh, 680px);
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--bs-body-bg) 94%, #fff 6%);
 }
 

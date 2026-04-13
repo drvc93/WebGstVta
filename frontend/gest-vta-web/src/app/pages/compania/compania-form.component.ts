@@ -7,6 +7,7 @@ import type { Compania, Pais, TipoDocumento } from '../../models/api.models';
 import { CatalogosService } from '../../services/catalogos.service';
 import { CompaniaService } from '../../services/compania.service';
 import { ToastService } from '../../core/toast.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-compania-form',
@@ -30,6 +31,8 @@ export class CompaniaFormComponent implements OnInit {
   /** Sincronizado con el formulario para mantener visible el país elegido al filtrar. */
   private readonly paisIdSeleccionado = signal<number | null>(null);
   readonly ubigeoOptions = signal<{ id: number; label: string }[]>([]);
+  readonly logoPreviewUrl = signal<string | null>(null);
+  private objectLogoUrl: string | null = null;
 
   readonly paisesFiltrados = computed(() => {
     const q = this.paisBusqueda().trim().toLowerCase();
@@ -55,6 +58,7 @@ export class CompaniaFormComponent implements OnInit {
   readonly loading = signal(true);
   readonly isEdit = signal(false);
   readonly confirmModalOpen = signal(false);
+  readonly imageModalOpen = signal(false);
   readonly saving = signal(false);
 
   readonly tituloConfirmacion = computed(() =>
@@ -110,6 +114,7 @@ export class CompaniaFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.destroyRef.onDestroy(() => this.revokeObjectLogoUrl());
     this.paisIdSeleccionado.set(this.form.get('paisId')?.value ?? null);
     this.form
       .get('paisId')
@@ -166,13 +171,75 @@ export class CompaniaFormComponent implements OnInit {
       telefono2: c.telefono2 ?? '',
       ultUsuario: c.ultUsuario ?? 'ADMIN',
     });
+    this.setLogoPreview(c.logoPath);
     this.loading.set(false);
   }
 
   logoPick(ev: Event): void {
     const input = ev.target as HTMLInputElement;
     const f = input.files?.[0];
-    if (f) this.form.patchValue({ logoPath: f.name });
+    if (!f) return;
+    this.revokeObjectLogoUrl();
+    this.objectLogoUrl = URL.createObjectURL(f);
+    this.logoPreviewUrl.set(this.objectLogoUrl);
+
+    this.companias.uploadLogo(f).subscribe({
+      next: (r) => {
+        const webPath = r.path?.trim();
+        if (!webPath) {
+          this.toast.error('Respuesta de subida inválida.');
+          return;
+        }
+        this.form.patchValue({ logoPath: webPath });
+        this.revokeObjectLogoUrl();
+        this.logoPreviewUrl.set(this.logoUrlForDisplay(webPath));
+      },
+      error: () => {
+        this.toast.error('No se pudo subir el logo. Revise sesión y tamaño del archivo.');
+        this.form.patchValue({ logoPath: '' });
+        this.revokeObjectLogoUrl();
+        this.logoPreviewUrl.set(null);
+        input.value = '';
+      },
+    });
+  }
+
+  abrirVisorLogo(): void {
+    if (!this.logoPreviewUrl()) return;
+    this.imageModalOpen.set(true);
+  }
+
+  cerrarVisorLogo(): void {
+    this.imageModalOpen.set(false);
+  }
+
+  private setLogoPreview(logoPath: string | null | undefined): void {
+    this.revokeObjectLogoUrl();
+    const raw = logoPath?.trim();
+    if (!raw) {
+      this.logoPreviewUrl.set(null);
+      return;
+    }
+    this.logoPreviewUrl.set(this.logoUrlForDisplay(raw));
+  }
+
+  /** URL absoluta para <img> (API en otro puerto u origen). */
+  private logoUrlForDisplay(storedPath: string): string | null {
+    const raw = storedPath.trim();
+    if (!raw) return null;
+    if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:image/') || raw.startsWith('blob:'))
+      return raw;
+    if (raw.startsWith('/files/'))
+      return `${environment.apiUrl}${raw}`;
+    if (raw.includes('/') || raw.includes('\\'))
+      return raw.startsWith('/') ? `${environment.apiUrl}${raw}` : raw;
+    return null;
+  }
+
+  private revokeObjectLogoUrl(): void {
+    if (!this.objectLogoUrl) return;
+    URL.revokeObjectURL(this.objectLogoUrl);
+    this.objectLogoUrl = null;
   }
 
   cancelar(): void {

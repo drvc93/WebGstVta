@@ -33,6 +33,18 @@ function mixBlack(rgb: { r: number; g: number; b: number }, factor: number): str
   return `${r}, ${g}, ${b}`;
 }
 
+/** Primario mezclado con casi-negro (sidebar oscura); `w` = peso del primario, bajo = casi negro. */
+function blendPrimaryNearBlack(rgb: { r: number; g: number; b: number }, primaryWeight: number): string {
+  const br = 5;
+  const bg = 9;
+  const bb = 16;
+  const t = Math.max(0, Math.min(1, primaryWeight));
+  const r = Math.round(rgb.r * t + br * (1 - t));
+  const g = Math.round(rgb.g * t + bg * (1 - t));
+  const b = Math.round(rgb.b * t + bb * (1 - t));
+  return `${r}, ${g}, ${b}`;
+}
+
 function lightenRgb(rgb: { r: number; g: number; b: number }, amount: number): string {
   const r = Math.round(rgb.r + (255 - rgb.r) * amount);
   const g = Math.round(rgb.g + (255 - rgb.g) * amount);
@@ -56,6 +68,10 @@ export class BrandThemeService {
     root.style.setProperty('--gest-navy-800', h);
     root.style.setProperty('--gest-navy-700', lightenRgb(rgb, 0.14));
     root.style.setProperty('--bs-link-color', h);
+
+    // Sidebar tema oscuro: casi negro con ligero matiz del primario (primarios saturados quedaban muy fuertes con solo mixBlack).
+    root.style.setProperty('--gest-sidebar-dark-start', `rgb(${blendPrimaryNearBlack(rgb, 0.11)})`);
+    root.style.setProperty('--gest-sidebar-dark-end', `rgb(${blendPrimaryNearBlack(rgb, 0.17)})`);
   }
 
   /** Quita sobrescrituras; vuelve a los valores del CSS compilado. */
@@ -67,6 +83,8 @@ export class BrandThemeService {
       '--gest-navy-900',
       '--gest-navy-800',
       '--gest-navy-700',
+      '--gest-sidebar-dark-start',
+      '--gest-sidebar-dark-end',
       '--bs-link-color',
     ];
     const root = document.documentElement;

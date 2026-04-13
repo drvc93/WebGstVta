@@ -12,8 +12,248 @@
   .bi {
     font-size: 1.1rem;
   }
+
+  &--accent {
+    color: var(--bs-primary);
+    background: color-mix(in srgb, var(--bs-primary) 8%, var(--gest-white, #fff));
+    box-shadow: none;
+    border: 1px solid color-mix(in srgb, var(--bs-primary) 18%, transparent);
+  }
 }
 
 html.app-dark .login-page {
   background: var(--bs-body-bg, #0c1628);
+}
+
+/* —— Paso selección compañía —— */
+.login-compania-step {
+  max-width: 28rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--gest-navy-900) 6%, transparent),
+    0 12px 40px color-mix(in srgb, var(--gest-navy-900) 10%, transparent);
+  animation: login-step-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 1px solid color-mix(in srgb, var(--gest-border-light, #dee2e6) 85%, transparent);
+}
+
+@keyframes login-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-compania-step__header {
+  padding: 1.25rem 1.35rem 1rem;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--bs-primary) 7%, var(--gest-white, #fff)) 0%,
+    var(--gest-white, #fff) 48%
+  );
+  border-bottom: 1px solid color-mix(in srgb, var(--gest-border-light) 70%, transparent);
+}
+
+html.app-dark .login-compania-step__header {
+  background: linear-gradient(165deg, color-mix(in srgb, var(--bs-primary) 14%, var(--bs-body-bg)) 0%, var(--bs-body-bg) 50%);
+}
+
+.login-compania-step__brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.login-compania-step__title {
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.login-compania-step__pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bs-primary);
+  background: color-mix(in srgb, var(--bs-primary) 12%, transparent);
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.login-compania-step__subtitle {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--gest-navy-900) 48%, transparent);
+  margin-top: 0.2rem;
+}
+
+.login-compania-step__body {
+  padding: 1.25rem 1.35rem 1.35rem;
+}
+
+.login-compania-callout {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 1.15rem;
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, var(--bs-info) 9%, var(--gest-white, #fff));
+  border: 1px solid color-mix(in srgb, var(--bs-info) 22%, transparent);
+}
+
+html.app-dark .login-compania-callout {
+  background: color-mix(in srgb, var(--bs-info) 14%, var(--bs-body-bg));
+}
+
+.login-compania-callout__icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: var(--bs-info);
+  font-size: 1.05rem;
+}
+
+.login-compania-callout__text {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--gest-navy-900) 78%, transparent);
+}
+
+.login-compania-alert {
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+}
+
+.login-compania-block {
+  margin-bottom: 1.25rem;
+}
+
+.login-compania-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.35rem;
+  color: var(--gest-navy-900, var(--bs-body-color));
+}
+
+.login-compania-lead {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--gest-navy-900) 52%, transparent);
+  margin: 0 0 1rem;
+}
+
+.login-compania-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: min(46vh, 15rem);
+  overflow-y: auto;
+  padding-right: 0.15rem;
+}
+
+.login-compania-option {
+  --compania-accent: #1a3a5c;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.75rem 0.65rem 0.65rem;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--gest-border-light) 90%, transparent);
+  border-radius: 0.65rem;
+  background: var(--gest-white, #fff);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
+
+  &:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--bs-primary) 32%, var(--gest-border-light));
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--gest-navy-900) 8%, transparent);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--bs-primary) 55%, transparent);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.75;
+    cursor: wait;
+  }
+}
+
+html.app-dark .login-compania-option {
+  background: var(--bs-body-bg);
+}
+
+.login-compania-option__accent {
+  width: 4px;
+  align-self: stretch;
+  min-height: 2.5rem;
+  border-radius: 4px;
+  background: var(--compania-accent);
+  flex-shrink: 0;
+}
+
+.login-compania-option__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.login-compania-option__code {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--gest-navy-900, var(--bs-body-color));
+}
+
+.login-compania-option__name {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--gest-navy-900) 55%, transparent);
+  word-break: break-word;
+}
+
+.login-compania-option__trail {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  color: color-mix(in srgb, var(--bs-primary) 75%, var(--gest-navy-900));
+  opacity: 0.85;
+}
+
+.login-compania-footer {
+  padding-top: 0.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--gest-border-light) 75%, transparent);
+}
+
+.login-compania-back {
+  border-radius: 999px;
+  padding-inline: 1rem;
+  color: color-mix(in srgb, var(--gest-navy-900) 58%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gest-border-light) 95%, transparent);
+
+  &:hover:not(:disabled) {
+    color: var(--bs-primary);
+    border-color: color-mix(in srgb, var(--bs-primary) 25%, transparent);
+    background: color-mix(in srgb, var(--bs-primary) 5%, var(--gest-white, #fff));
+  }
+}
+
+html.app-dark .login-compania-back:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--bs-primary) 12%, var(--bs-body-bg));
 }

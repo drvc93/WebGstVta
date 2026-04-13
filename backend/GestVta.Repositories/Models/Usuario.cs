@@ -20,4 +20,6 @@ public class Usuario
     public Compania? Compania { get; set; }
 
     public ICollection<UsuarioRol> UsuarioRoles { get; set; } = new List<UsuarioRol>();
+
+    public ICollection<UsuarioCompania> UsuarioCompanias { get; set; } = new List<UsuarioCompania>();
 }

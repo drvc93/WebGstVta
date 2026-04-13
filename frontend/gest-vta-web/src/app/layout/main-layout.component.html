@@ -127,6 +127,58 @@
             </nav>
           </div>
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            @if (mostrarCambioCompania()) {
+              <div class="layout-compania-switch position-relative">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1 layout-compania-switch-trigger"
+                  [class.layout-compania-switch-trigger--open]="companiaPanelOpen()"
+                  (click)="toggleCompaniaPanel(); $event.stopPropagation()"
+                  [attr.aria-expanded]="companiaPanelOpen()"
+                  aria-haspopup="listbox"
+                  aria-label="Cambiar compañía de trabajo"
+                >
+                  <i class="bi bi-buildings" aria-hidden="true"></i>
+                  <span class="d-none d-md-inline text-truncate layout-compania-switch-label">{{ etiquetaCompaniaActual() }}</span>
+                  @if (companiaPanelOpen()) {
+                    <i class="bi bi-chevron-up" aria-hidden="true"></i>
+                  } @else {
+                    <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                  }
+                </button>
+                @if (companiaPanelOpen()) {
+                  <div class="layout-compania-panel card border-0 shadow" role="listbox" aria-label="Compañías disponibles" (click)="$event.stopPropagation()">
+                    <div class="card-body p-2">
+                      <div class="layout-compania-panel-title px-2 py-1 mb-1">Trabajar en otra compañía</div>
+                      @for (c of companiasDisponibles(); track c.id) {
+                        <button
+                          type="button"
+                          class="layout-compania-panel-item w-100 btn btn-sm text-start d-flex align-items-center gap-2"
+                          [class.layout-compania-panel-item--current]="c.id === auth.session()?.companiaId"
+                          [disabled]="companiaSwitchLoading()"
+                          (click)="elegirOtraCompania(c.id)"
+                        >
+                          <span
+                            class="layout-compania-panel-swatch rounded-1 flex-shrink-0"
+                            [style.background]="c.colorPrimario && c.colorPrimario.startsWith('#') ? c.colorPrimario : '#1a3a5c'"
+                            aria-hidden="true"
+                          ></span>
+                          <span class="text-truncate flex-grow-1 min-w-0">
+                            <span class="fw-semibold d-block text-truncate">{{ c.codigo }}</span>
+                            @if (companiaTieneSubtitulo(c)) {
+                              <span class="small text-secondary d-block text-truncate">{{ c.nombre }}</span>
+                            }
+                          </span>
+                          @if (c.id === auth.session()?.companiaId) {
+                            <i class="bi bi-check2 text-primary flex-shrink-0" aria-hidden="true"></i>
+                          }
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
             <button
               type="button"
               class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"

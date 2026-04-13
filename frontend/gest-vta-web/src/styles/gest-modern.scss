@@ -327,7 +327,7 @@ html.app-dark .gest-data-card .table thead th {
 }
 
 html.app-dark .gest-data-card .table tbody td:first-child {
-  color: color-mix(in srgb, var(--gest-white) 92%, transparent);
+  color: var(--bs-body-color);
 }
 
 .gest-data-card .table tbody tr {

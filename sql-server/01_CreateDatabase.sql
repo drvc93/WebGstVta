@@ -5,5 +5,9 @@ BEGIN
 END
 GO
 
+-- SQL Server 2016 = compatibilidad 130 (evita opciones de niveles superiores al generar scripts en SSMS más nuevo)
+ALTER DATABASE GestVta SET COMPATIBILITY_LEVEL = 130;
+GO
+
 USE GestVta;
 GO

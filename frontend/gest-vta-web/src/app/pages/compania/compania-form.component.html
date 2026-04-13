@@ -63,9 +63,17 @@
         </div>
 
         <div class="form-col">
-          @if (form.value.logoPath) {
-            <div class="logo-preview">
-              <img [src]="form.value.logoPath" alt="Logo" />
+          @if (logoPreviewUrl()) {
+            <div
+              class="logo-preview"
+              role="button"
+              tabindex="0"
+              title="Doble clic para ampliar"
+              (dblclick)="abrirVisorLogo()"
+              (keydown.enter)="abrirVisorLogo()"
+              (keydown.space)="abrirVisorLogo(); $event.preventDefault()"
+            >
+              <img [src]="logoPreviewUrl()!" alt="Vista previa del logo" />
             </div>
           }
           <label class="field-label form-label mb-0">Foto / logo</label>
@@ -162,6 +170,32 @@
             }
             Sí, guardar
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (imageModalOpen() && logoPreviewUrl()) {
+  <div class="modal-backdrop fade show gest-image-backdrop" (click)="cerrarVisorLogo()"></div>
+  <div
+    class="modal fade show d-block gest-image-modal"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="logoViewerTitle"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-bottom">
+          <h2 class="modal-title h6 mb-0 d-flex align-items-center gap-2" id="logoViewerTitle">
+            <i class="bi bi-image text-primary" aria-hidden="true"></i>
+            Vista previa del logo
+          </h2>
+          <button type="button" class="btn-close" aria-label="Cerrar" (click)="cerrarVisorLogo()"></button>
+        </div>
+        <div class="modal-body p-2 p-md-3">
+          <img class="logo-viewer-image" [src]="logoPreviewUrl()!" alt="Logo ampliado" />
         </div>
       </div>
     </div>

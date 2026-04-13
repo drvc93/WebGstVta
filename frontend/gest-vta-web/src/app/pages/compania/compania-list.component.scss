@@ -83,6 +83,8 @@
     padding: var(--compania-pad-y) var(--compania-pad-x);
     border-bottom-color: var(--gest-border-light);
     vertical-align: middle;
+    /* Un solo color de texto (evita choque con .gest-data-card .table td:first-child y estilos por columna). */
+    color: var(--gest-navy-900);
   }
 
   tbody tr:last-child td {
@@ -148,7 +150,6 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
-  color: var(--bs-primary);
   white-space: nowrap;
 }
 
@@ -168,20 +169,17 @@
 
 .compania-doc {
   font-variant-numeric: tabular-nums;
-  color: var(--gest-navy-800);
   white-space: nowrap;
 }
 
 .compania-tel {
   font-size: 0.8125rem;
-  color: color-mix(in srgb, var(--gest-navy-900) 78%, transparent);
   max-width: 9rem;
   word-break: break-word;
 }
 
 .compania-meta {
   font-size: 0.8125rem;
-  color: color-mix(in srgb, var(--gest-navy-900) 65%, transparent);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -254,13 +252,8 @@
     background-color: color-mix(in srgb, var(--bs-primary) 12%, var(--bs-body-bg)) !important;
   }
 
-  .compania-doc {
-    color: color-mix(in srgb, var(--gest-white) 88%, transparent);
-  }
-
-  .compania-tel,
-  .compania-meta {
-    color: color-mix(in srgb, var(--gest-white) 62%, transparent);
+  .gest-data-card.compania-table-card .compania-table tbody td {
+    color: var(--bs-body-color) !important;
   }
 
   .compania-pager {

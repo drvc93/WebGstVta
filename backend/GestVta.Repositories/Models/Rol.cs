@@ -8,4 +8,5 @@ public class Rol
     public bool Activo { get; set; } = true;
 
     public ICollection<UsuarioRol> UsuarioRoles { get; set; } = new List<UsuarioRol>();
+    public ICollection<RolMenuPermiso> RolMenuPermisos { get; set; } = new List<RolMenuPermiso>();
 }

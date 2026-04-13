@@ -1,46 +1,127 @@
 <div class="login-page d-flex align-items-center justify-content-center min-vh-100 px-3">
-  <div class="login-card card gest-panel shadow border-0 w-100" style="max-width: 420px">
-    <div class="card-header gest-card-header border-0">
-      <div class="d-flex align-items-center gap-2">
-        <span class="login-mark d-inline-flex align-items-center justify-content-center rounded-3" aria-hidden="true">
-          <i class="bi bi-layers-half"></i>
-        </span>
-        <span class="fw-bold">GestVta</span>
+  @if (phase() === 'credentials') {
+    <div class="login-card card gest-panel shadow border-0 w-100" style="max-width: 420px">
+      <div class="card-header gest-card-header border-0">
+        <div class="d-flex align-items-center gap-2">
+          <span class="login-mark d-inline-flex align-items-center justify-content-center rounded-3" aria-hidden="true">
+            <i class="bi bi-layers-half"></i>
+          </span>
+          <span class="fw-bold">GestVta</span>
+        </div>
+        <p class="small text-secondary mb-0 mt-2">Inicie sesión para continuar</p>
       </div>
-      <p class="small text-secondary mb-0 mt-2">Inicie sesión para continuar</p>
-    </div>
-    <div class="card-body pt-3">
-      @if (errorMsg()) {
-        <div class="alert alert-danger py-2 small mb-3" role="alert">{{ errorMsg() }}</div>
-      }
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <label class="form-label small mb-1" for="login-user">Usuario</label>
-        <input
-          id="login-user"
-          class="form-control form-control-sm mb-3"
-          type="text"
-          autocomplete="username"
-          formControlName="username"
-        />
+      <div class="card-body pt-3">
+        @if (errorMsg()) {
+          <div class="alert alert-danger py-2 small mb-3" role="alert">{{ errorMsg() }}</div>
+        }
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <label class="form-label small mb-1" for="login-user">Usuario</label>
+          <input
+            id="login-user"
+            class="form-control form-control-sm mb-3"
+            type="text"
+            autocomplete="username"
+            formControlName="username"
+          />
 
-        <label class="form-label small mb-1" for="login-pass">Contraseña</label>
-        <input
-          id="login-pass"
-          class="form-control form-control-sm mb-3"
-          type="password"
-          autocomplete="current-password"
-          formControlName="password"
-        />
+          <label class="form-label small mb-1" for="login-pass">Contraseña</label>
+          <input
+            id="login-pass"
+            class="form-control form-control-sm mb-3"
+            type="password"
+            autocomplete="current-password"
+            formControlName="password"
+          />
 
-        <button type="submit" class="btn btn-primary btn-sm w-100 d-inline-flex align-items-center justify-content-center gap-2" [disabled]="loading()">
-          @if (loading()) {
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          } @else {
-            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
-          }
-          Entrar
-        </button>
-      </form>
+          <button type="submit" class="btn btn-primary btn-sm w-100 d-inline-flex align-items-center justify-content-center gap-2" [disabled]="loading()">
+            @if (loading()) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            } @else {
+              <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+            }
+            Entrar
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
+  } @else {
+    <div
+      class="login-compania-step card gest-panel border-0 w-100"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="login-compania-title"
+    >
+      <div class="login-compania-step__header">
+        <div class="login-compania-step__brand">
+          <span class="login-mark login-mark--accent d-inline-flex align-items-center justify-content-center rounded-3" aria-hidden="true">
+            <i class="bi bi-buildings"></i>
+          </span>
+          <div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <span class="fw-bold login-compania-step__title">GestVta</span>
+              <span class="login-compania-step__pill">Paso 2 de 2</span>
+            </div>
+            <p class="login-compania-step__subtitle mb-0">Acceso verificado</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body login-compania-step__body">
+        <div class="login-compania-callout" role="status">
+          <i class="bi bi-info-circle login-compania-callout__icon" aria-hidden="true"></i>
+          <p class="login-compania-callout__text mb-0">
+            Elija la compañía con la que trabajará en esta sesión. La aplicación se abrirá solo después de confirmar.
+          </p>
+        </div>
+
+        @if (errorMsg()) {
+          <div class="alert alert-danger py-2 small mb-0 login-compania-alert" role="alert">{{ errorMsg() }}</div>
+        }
+
+        <div class="login-compania-block">
+          <h2 id="login-compania-title" class="login-compania-heading">¿Con qué compañía entra?</h2>
+          <p class="login-compania-lead">
+            @if (pickNombreMostrar()) {
+              <span>Hola, <strong>{{ pickNombreMostrar() }}</strong>. </span>
+            }
+            Tiene <strong>{{ companiasPick().length }} compañías</strong> disponibles.
+          </p>
+
+          <ul class="login-compania-list">
+            @for (c of companiasPick(); track c.id) {
+              <li>
+                <button
+                  type="button"
+                  class="login-compania-option"
+                  [disabled]="loading()"
+                  [style.--compania-accent]="colorCompania(c)"
+                  (click)="elegirCompania(c.id)"
+                >
+                  <span class="login-compania-option__accent" aria-hidden="true"></span>
+                  <span class="login-compania-option__content">
+                    <span class="login-compania-option__code">{{ c.codigo }}</span>
+                    @if (companiaLineaSecundaria(c); as linea2) {
+                      <span class="login-compania-option__name">{{ linea2 }}</span>
+                    }
+                  </span>
+                  @if (loading()) {
+                    <span class="spinner-border spinner-border-sm login-compania-option__trail" aria-hidden="true"></span>
+                  } @else {
+                    <i class="bi bi-arrow-right-circle login-compania-option__trail" aria-hidden="true"></i>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="login-compania-footer">
+          <button type="button" class="btn btn-light btn-sm login-compania-back" [disabled]="loading()" (click)="volverACredenciales()">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            Volver al inicio de sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
