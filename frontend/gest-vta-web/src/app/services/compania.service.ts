@@ -35,4 +35,9 @@ export class CompaniaService {
     fd.append('file', file, file.name);
     return this.http.post<{ path: string }>(`${this.base}/logo`, fd);
   }
+
+  /** Elimina físicamente un logo en FileStorage usando su ruta web (/files/companias/...). */
+  deleteLogo(path: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/logo`, { params: { path } });
+  }
 }

@@ -1,27 +1,39 @@
-<div class="page-head gest-page-head d-flex flex-wrap align-items-baseline justify-content-between gap-2">
-  <h1 class="h3 mb-0 gest-page-title">{{ isEdit() ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
-  <nav class="crumbs small text-secondary d-flex align-items-center gap-1" aria-label="Miga de pan">
-    <i class="bi bi-folder2" aria-hidden="true"></i>
-    <span>Maestros / Usuarios</span>
-  </nav>
-</div>
+<div class="usuario-form-page">
+  <header class="page-head gest-page-head usuario-form-page-head d-flex flex-wrap align-items-baseline justify-content-between gap-2">
+    <div>
+      <h1 class="h3 mb-1 gest-page-title">{{ isEdit() ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
+      <p class="small text-secondary mb-0 usuario-form-page-lead">
+        Complete cada bloque y pulse <strong>Guardar</strong> al final. Los roles son obligatorios; las compañías son opcionales.
+      </p>
+    </div>
+    <nav class="crumbs small text-secondary d-flex align-items-center gap-1 flex-shrink-0" aria-label="Miga de pan">
+      <i class="bi bi-folder2" aria-hidden="true"></i>
+      <span>Maestros / Usuarios</span>
+    </nav>
+  </header>
 
-@if (loading()) {
-  <div class="gest-loading-panel" role="status">
-    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-    <span>Cargando…</span>
-  </div>
-} @else {
-  <div class="card gest-panel usuario-form-card">
-    <div class="card-body usuario-form-body">
-      <form [formGroup]="form" (ngSubmit)="guardar()">
-        <section class="usuario-form-section" aria-labelledby="usuario-datos-title">
-          <div class="usuario-form-section__head">
-            <h2 id="usuario-datos-title" class="usuario-form-section__title">
-              <i class="bi bi-person-lines-fill usuario-form-section__icon" aria-hidden="true"></i>
-              Datos generales
-            </h2>
+  @if (loading()) {
+    <div class="card gest-panel usuario-form-panel usuario-form-panel--loading" role="status" aria-live="polite">
+      <div class="card-body gest-loading-panel usuario-form-loading-inner">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        <span>Cargando datos del usuario…</span>
+      </div>
+    </div>
+  } @else {
+    <form class="usuario-form-stack" [formGroup]="form" (ngSubmit)="guardar()">
+      <article class="card gest-panel usuario-form-panel shadow-sm" aria-labelledby="usuario-datos-title">
+        <div class="card-header usuario-form-panel-head bg-body-tertiary border-bottom py-2 px-3">
+          <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-person-lines-fill usuario-form-panel-icon text-primary" aria-hidden="true"></i>
+            <div class="min-w-0">
+              <h2 id="usuario-datos-title" class="h6 mb-0 usuario-form-panel-title">1. Datos generales</h2>
+              <p class="small text-secondary mb-0 mt-1 usuario-form-panel-desc">
+                Credenciales de acceso y nombre que verá el usuario en la aplicación.
+              </p>
+            </div>
           </div>
+        </div>
+        <div class="card-body usuario-form-panel-body">
           <div class="usuario-form-fields">
             <div class="usuario-form-field">
               <label class="form-label" for="uUsername">Usuario</label>
@@ -50,24 +62,31 @@
               }
             </div>
           </div>
-          <div class="usuario-form-switch">
-            <div class="form-check form-switch m-0">
+          <div class="usuario-form-activo">
+            <div class="form-check form-switch m-0 usuario-form-activo-inner">
               <input class="form-check-input" type="checkbox" role="switch" id="uActivo" formControlName="activo" />
               <label class="form-check-label" for="uActivo">Usuario activo</label>
             </div>
-          </div>
-        </section>
-
-        <section class="usuario-form-section" aria-labelledby="usuario-companias-title">
-          <div class="usuario-form-section__head">
-            <h2 id="usuario-companias-title" class="usuario-form-section__title">
-              <i class="bi bi-buildings usuario-form-section__icon" aria-hidden="true"></i>
-              Compañías asociadas
-            </h2>
-            <p class="usuario-form-section__lead">
-              La <strong>primera</strong> de la lista es la compañía predeterminada al iniciar sesión. Use las flechas para reordenar.
+            <p class="usuario-form-activo-hint small text-secondary mb-0">
+              Si está desactivado, no podrá iniciar sesión aunque conserve roles y compañías.
             </p>
           </div>
+        </div>
+      </article>
+
+      <article class="card gest-panel usuario-form-panel shadow-sm" aria-labelledby="usuario-companias-title">
+        <div class="card-header usuario-form-panel-head bg-body-tertiary border-bottom py-2 px-3">
+          <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-buildings usuario-form-panel-icon text-primary" aria-hidden="true"></i>
+            <div class="min-w-0">
+              <h2 id="usuario-companias-title" class="h6 mb-0 usuario-form-panel-title">2. Compañías asociadas</h2>
+              <p class="small text-secondary mb-0 mt-1 usuario-form-panel-desc">
+                Indica a qué compañías puede acceder. La compañía con la que trabaja se <strong>elige al iniciar sesión</strong>, no depende del orden de esta lista. Las flechas solo sirven para ordenar cómo se muestran aquí.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="card-body usuario-form-panel-body">
           <div class="usuario-form-subpanel">
             <label class="form-label small text-secondary mb-1" for="usuarioAddCompania">Añadir compañía</label>
             <select
@@ -110,16 +129,20 @@
               </ul>
             }
           </div>
-        </section>
+        </div>
+      </article>
 
-        <section class="usuario-form-section" aria-labelledby="usuario-roles-title">
-          <div class="usuario-form-section__head">
-            <h2 id="usuario-roles-title" class="usuario-form-section__title">
-              <i class="bi bi-shield-check usuario-form-section__icon" aria-hidden="true"></i>
-              Roles
-            </h2>
-            <p class="usuario-form-section__lead mb-0">Marque al menos un rol para el usuario.</p>
+      <article class="card gest-panel usuario-form-panel shadow-sm" aria-labelledby="usuario-roles-title">
+        <div class="card-header usuario-form-panel-head bg-body-tertiary border-bottom py-2 px-3">
+          <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-shield-check usuario-form-panel-icon text-primary" aria-hidden="true"></i>
+            <div class="min-w-0">
+              <h2 id="usuario-roles-title" class="h6 mb-0 usuario-form-panel-title">3. Roles</h2>
+              <p class="small text-secondary mb-0 mt-1 usuario-form-panel-desc">Marque al menos un rol para el usuario.</p>
+            </div>
           </div>
+        </div>
+        <div class="card-body usuario-form-panel-body">
           <div class="usuario-roles-grid">
             @for (r of rolesActivos(); track r.id) {
               <label class="usuario-role-tile" [for]="'rol-' + r.id">
@@ -137,9 +160,11 @@
               </label>
             }
           </div>
-        </section>
+        </div>
+      </article>
 
-        <footer class="usuario-form-footer">
+      <footer class="usuario-form-actions card gest-panel border shadow-sm">
+        <div class="card-body py-3 usuario-form-actions-inner">
           <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="saving()">
             @if (saving()) {
               <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
@@ -147,8 +172,8 @@
             Guardar
           </button>
           <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="volver()" [disabled]="saving()">Cancelar</button>
-        </footer>
-      </form>
-    </div>
-  </div>
-}
+        </div>
+      </footer>
+    </form>
+  }
+</div>

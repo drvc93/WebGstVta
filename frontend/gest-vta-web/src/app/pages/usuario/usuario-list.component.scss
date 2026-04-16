@@ -6,46 +6,6 @@
   margin-bottom: 0.75rem;
 }
 
-.usuario-search {
-  flex: 1 1 14rem;
-  max-width: 22rem;
-  border-radius: var(--gest-radius-md);
-  box-shadow: var(--gest-shadow-sm);
-
-  .input-group-text,
-  .form-control,
-  .btn {
-    border-color: var(--gest-border-light);
-  }
-}
-
-.usuario-search-icon {
-  background: color-mix(in srgb, var(--gest-off-white) 85%, var(--gest-white));
-  color: var(--gest-navy-800);
-}
-
-.usuario-search-clear {
-  border-left: none;
-}
-
-.usuario-th-sort {
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-}
-
-.usuario-th-text {
-  margin-right: 0.25rem;
-}
-
-.usuario-th-icon--active {
-  color: var(--bs-primary);
-}
-
-.usuario-th-icon--idle {
-  opacity: 0.35;
-}
-
 .usuario-code {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -56,16 +16,18 @@
   max-width: 18rem;
 }
 
-.usuario-badge--ok {
-  background: color-mix(in srgb, var(--bs-success) 18%, var(--gest-white));
-  color: var(--bs-success);
-}
-
-.usuario-badge--off {
-  background: color-mix(in srgb, var(--gest-navy-700) 12%, var(--gest-white));
-  color: var(--gest-navy-700);
+/* Tema oscuro: mismo tono que el resto de celdas (body-color), no secondary (más apagado) */
+:host-context(html.app-dark) {
+  .usuario-meta {
+    color: var(--bs-body-color);
+  }
 }
 
 .usuario-table-card {
   border-radius: var(--gest-radius-md);
+}
+
+.usuario-th-action {
+  width: 1%;
+  white-space: nowrap;
 }

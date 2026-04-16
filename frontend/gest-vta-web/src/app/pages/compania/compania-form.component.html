@@ -78,6 +78,18 @@
           }
           <label class="field-label form-label mb-0">Foto / logo</label>
           <input type="file" class="form-control form-control-sm" accept="image/*" (change)="logoPick($event)" />
+          <div class="logo-actions d-flex flex-wrap gap-2 mt-2">
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-sm"
+              [disabled]="!form.controls.logoPath.value?.trim()"
+              (click)="quitarLogo()"
+            >
+              <i class="bi bi-trash3 me-1" aria-hidden="true"></i>
+              Eliminar logo
+            </button>
+            <span class="small text-secondary align-self-center">Para reemplazarlo, seleccione una nueva imagen arriba.</span>
+          </div>
 
           <label class="field-label form-label mb-0" for="colorPrimario">Color principal</label>
           <div class="d-flex align-items-center gap-2 flex-wrap">

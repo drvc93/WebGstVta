@@ -179,6 +179,7 @@ export class CompaniaFormComponent implements OnInit {
     const input = ev.target as HTMLInputElement;
     const f = input.files?.[0];
     if (!f) return;
+    const oldLogoPath = this.form.controls.logoPath.value?.trim() ?? '';
     this.revokeObjectLogoUrl();
     this.objectLogoUrl = URL.createObjectURL(f);
     this.logoPreviewUrl.set(this.objectLogoUrl);
@@ -193,6 +194,14 @@ export class CompaniaFormComponent implements OnInit {
         this.form.patchValue({ logoPath: webPath });
         this.revokeObjectLogoUrl();
         this.logoPreviewUrl.set(this.logoUrlForDisplay(webPath));
+        input.value = '';
+        if (oldLogoPath && oldLogoPath !== webPath) {
+          this.companias.deleteLogo(oldLogoPath).subscribe({
+            error: () => {
+              // No bloquea la UX; solo evita archivos huérfanos cuando se puede.
+            },
+          });
+        }
       },
       error: () => {
         this.toast.error('No se pudo subir el logo. Revise sesión y tamaño del archivo.');
@@ -201,6 +210,18 @@ export class CompaniaFormComponent implements OnInit {
         this.logoPreviewUrl.set(null);
         input.value = '';
       },
+    });
+  }
+
+  quitarLogo(): void {
+    const oldLogoPath = this.form.controls.logoPath.value?.trim() ?? '';
+    this.form.patchValue({ logoPath: '' });
+    this.revokeObjectLogoUrl();
+    this.logoPreviewUrl.set(null);
+    if (!oldLogoPath) return;
+    this.companias.deleteLogo(oldLogoPath).subscribe({
+      next: () => this.toast.info('Logo eliminado.'),
+      error: () => this.toast.error('Se quitó del formulario, pero no se pudo borrar el archivo en servidor.'),
     });
   }
 

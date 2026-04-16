@@ -41,7 +41,7 @@ export class UsuarioFormComponent implements OnInit {
 
   readonly companias = signal<Compania[]>([]);
   readonly roles = signal<Rol[]>([]);
-  /** Orden de compañías: el primero es el predeterminado (Usuario.CompaniaId en API). */
+  /** Orden de compañías asociadas (solo afecta cómo se listan aquí; la compañía activa se elige en el login). */
   readonly companiaIdsOrden = signal<number[]>([]);
   readonly loading = signal(true);
   readonly saving = signal(false);

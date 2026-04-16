@@ -15,13 +15,13 @@
     <i class="bi bi-plus-lg" aria-hidden="true"></i>
     Nuevo
   </button>
-  <div class="usuario-search input-group input-group-sm">
-    <span class="input-group-text usuario-search-icon" aria-hidden="true">
+  <div class="gest-list-search input-group input-group-sm">
+    <span class="input-group-text gest-list-search-icon" aria-hidden="true">
       <i class="bi bi-search"></i>
     </span>
     <input
       type="search"
-      class="form-control usuario-search-input"
+      class="form-control"
       placeholder="Buscar por usuario, nombre, roles…"
       autocomplete="off"
       [value]="searchText()"
@@ -29,7 +29,7 @@
       aria-label="Buscar usuarios"
     />
     @if (searchText()) {
-      <button type="button" class="btn btn-outline-secondary usuario-search-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+      <button type="button" class="btn btn-outline-secondary gest-list-search-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
     }
@@ -48,65 +48,65 @@
         <table class="table table-hover table-gest usuario-table mb-0 align-middle">
           <thead>
             <tr>
-              <th scope="col" class="usuario-th-sort" (click)="toggleSort('username')">
-                <span class="usuario-th-text">Usuario</span>
+              <th scope="col" class="gest-th-sort" (click)="toggleSort('username')">
+                <span class="gest-th-text">Usuario</span>
                 @switch (sortIconState('username')) {
                   @case ('asc') {
-                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @case ('desc') {
-                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @default {
-                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                    <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
                   }
                 }
               </th>
-              <th scope="col" class="usuario-th-sort" (click)="toggleSort('nombreMostrar')">
-                <span class="usuario-th-text">Nombre</span>
+              <th scope="col" class="gest-th-sort" (click)="toggleSort('nombreMostrar')">
+                <span class="gest-th-text">Nombre</span>
                 @switch (sortIconState('nombreMostrar')) {
                   @case ('asc') {
-                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @case ('desc') {
-                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @default {
-                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                    <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
                   }
                 }
               </th>
-              <th scope="col" class="usuario-th-static"><span class="usuario-th-text">Compañías</span></th>
-              <th scope="col" class="usuario-th-static"><span class="usuario-th-text">Roles</span></th>
-              <th scope="col" class="usuario-th-sort" (click)="toggleSort('activo')">
-                <span class="usuario-th-text">Estado</span>
+              <th scope="col" class="gest-th-static"><span class="gest-th-text">Compañías</span></th>
+              <th scope="col" class="gest-th-static"><span class="gest-th-text">Roles</span></th>
+              <th scope="col" class="gest-th-sort" (click)="toggleSort('activo')">
+                <span class="gest-th-text">Estado</span>
                 @switch (sortIconState('activo')) {
                   @case ('asc') {
-                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @case ('desc') {
-                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @default {
-                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                    <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
                   }
                 }
               </th>
-              <th scope="col" class="usuario-th-sort" (click)="toggleSort('fechaCreacion')">
-                <span class="usuario-th-text">Alta</span>
+              <th scope="col" class="gest-th-sort" (click)="toggleSort('fechaCreacion')">
+                <span class="gest-th-text">Alta</span>
                 @switch (sortIconState('fechaCreacion')) {
                   @case ('asc') {
-                    <i class="bi bi-sort-up-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @case ('desc') {
-                    <i class="bi bi-sort-down-alt usuario-th-icon usuario-th-icon--active" aria-hidden="true"></i>
+                    <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
                   @default {
-                    <i class="bi bi-arrow-down-up usuario-th-icon usuario-th-icon--idle" aria-hidden="true"></i>
+                    <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
                   }
                 }
               </th>
-              <th scope="col" class="text-end usuario-th-static usuario-th-action">Acción</th>
+              <th scope="col" class="text-end gest-th-static usuario-th-action">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -118,9 +118,9 @@
                 <td class="usuario-meta small">{{ rolesLabel(u) }}</td>
                 <td>
                   @if (u.activo) {
-                    <span class="badge usuario-badge usuario-badge--ok">Activo</span>
+                    <span class="badge gest-status-badge gest-status-badge--ok">Activo</span>
                   } @else {
-                    <span class="badge usuario-badge usuario-badge--off">Inactivo</span>
+                    <span class="badge gest-status-badge gest-status-badge--off">Inactivo</span>
                   }
                 </td>
                 <td class="usuario-meta">{{ u.fechaCreacion | date: 'dd/MM/yyyy' }}</td>
@@ -165,12 +165,12 @@
         </table>
       </div>
     </div>
-    <div class="card-footer usuario-pager d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+    <div class="card-footer gest-list-pager d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
       <div class="d-flex align-items-center gap-2">
         <label class="small mb-0 text-secondary fw-medium" for="usuarioPageSizeSel">Filas por página</label>
         <select
           id="usuarioPageSizeSel"
-          class="form-select form-select-sm usuario-page-size"
+          class="form-select form-select-sm gest-page-size"
           [value]="pageSize()"
           (change)="setPageSize(+$any($event.target).value)"
         >
@@ -180,11 +180,11 @@
         </select>
       </div>
       <div class="d-flex align-items-center flex-wrap gap-2">
-        <span class="small usuario-pager-info">
+        <span class="small gest-pager-info">
           Página <strong>{{ pageIndex() + 1 }}</strong> de <strong>{{ totalPages() }}</strong>
           <span class="text-secondary"> · {{ sortedRows().length }} registros</span>
         </span>
-        <div class="btn-group" role="group" aria-label="Paginación">
+        <div class="btn-group gest-pager-btns" role="group" aria-label="Paginación">
           <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="pageIndex() === 0" (click)="prevPage()">
             <i class="bi bi-chevron-left" aria-hidden="true"></i>
             Anterior

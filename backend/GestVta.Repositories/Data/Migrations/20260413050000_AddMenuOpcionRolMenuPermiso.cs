@@ -96,9 +96,6 @@ public partial class AddMenuOpcionRolMenuPermiso : Migration
             IF NOT EXISTS (SELECT 1 FROM dbo.MenuOpcion WHERE Codigo = N'OP_COMPANIA')
             INSERT INTO dbo.MenuOpcion (Id, Codigo, Nombre, Ruta, Icono, ParentId, Orden, Activo)
             VALUES (10, N'OP_COMPANIA', N'Compañía', N'/maestros/compania', N'bi-building', 1, 10, 1);
-            IF NOT EXISTS (SELECT 1 FROM dbo.MenuOpcion WHERE Codigo = N'OP_COMPANIA_EXPORT')
-            INSERT INTO dbo.MenuOpcion (Id, Codigo, Nombre, Ruta, Icono, ParentId, Orden, Activo)
-            VALUES (11, N'OP_COMPANIA_EXPORT', N'Exportar listado', N'/maestros/compania/export', N'bi-download', 10, 1, 1);
             IF NOT EXISTS (SELECT 1 FROM dbo.MenuOpcion WHERE Codigo = N'OP_USUARIOS')
             INSERT INTO dbo.MenuOpcion (Id, Codigo, Nombre, Ruta, Icono, ParentId, Orden, Activo)
             VALUES (12, N'OP_USUARIOS', N'Usuarios', N'/maestros/usuarios', N'bi-person-badge', 1, 20, 1);

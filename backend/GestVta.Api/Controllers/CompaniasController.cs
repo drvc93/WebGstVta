@@ -55,6 +55,28 @@ public sealed class CompaniasController(ApplicationDbContext db, FileStoragePath
         return Ok(new LogoUploadResponse(webPath));
     }
 
+    /// <summary>Elimina un logo físico a partir de su ruta web (/files/companias/xxx.png).</summary>
+    [HttpDelete("logo")]
+    public IActionResult DeleteLogo([FromQuery] string path)
+    {
+        var raw = (path ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(raw))
+            return BadRequest(new { message = "Parámetro path requerido." });
+
+        if (!raw.StartsWith(filePaths.StaticRequestPath + "/companias/", StringComparison.OrdinalIgnoreCase))
+            return BadRequest(new { message = "Ruta de logo inválida." });
+
+        var fileName = Path.GetFileName(raw.Replace('\\', '/'));
+        if (string.IsNullOrWhiteSpace(fileName))
+            return BadRequest(new { message = "Ruta de logo inválida." });
+
+        var physical = Path.Combine(filePaths.CompaniasPhysical, fileName);
+        if (System.IO.File.Exists(physical))
+            System.IO.File.Delete(physical);
+
+        return NoContent();
+    }
+
     [HttpPost]
     public async Task<ActionResult<Compania>> Create([FromBody] Compania entity, CancellationToken ct)
     {

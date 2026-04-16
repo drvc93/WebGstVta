@@ -128,6 +128,43 @@ html.app-dark .gest-page-title {
   box-shadow: var(--gest-shadow-sm);
 }
 
+/* Controles comunes en listados */
+.gest-list-search {
+  flex: 1 1 14rem;
+  max-width: 22rem;
+  border-radius: var(--gest-radius-md);
+  box-shadow: var(--gest-shadow-sm);
+}
+
+.gest-list-search .input-group-text,
+.gest-list-search .form-control,
+.gest-list-search .btn {
+  border-color: var(--gest-border-light);
+}
+
+.gest-list-search .form-control:focus {
+  box-shadow: none;
+  border-color: color-mix(in srgb, var(--bs-primary) 45%, var(--gest-border-light));
+}
+
+.gest-list-search-icon {
+  background: color-mix(in srgb, var(--gest-off-white) 85%, var(--gest-white));
+  color: var(--gest-navy-800);
+}
+
+.gest-list-search .form-control::placeholder {
+  color: color-mix(in srgb, var(--gest-navy-900) 45%, transparent);
+}
+
+.gest-list-search-clear {
+  border-left: none;
+}
+
+html.app-dark .gest-list-search-icon {
+  background: color-mix(in srgb, var(--bs-body-bg) 90%, var(--gest-white));
+  color: var(--gest-text-on-navy-muted);
+}
+
 html.app-dark .gest-toolbar {
   background: color-mix(in srgb, var(--bs-body-bg) 92%, var(--gest-white) 8%);
   border-color: var(--gest-border-light);
@@ -330,6 +367,11 @@ html.app-dark .gest-data-card .table tbody td:first-child {
   color: var(--bs-body-color);
 }
 
+/* Celdas sin clase propia: asegurar texto legible en oscuro (evita heredar grises pensados solo para tema claro) */
+html.app-dark .gest-data-card .table tbody td {
+  color: var(--bs-body-color);
+}
+
 .gest-data-card .table tbody tr {
   transition: background-color 0.15s ease;
 }
@@ -350,8 +392,145 @@ html.app-dark .gest-data-card .table tbody tr:hover {
   padding-bottom: 0.85rem !important;
 }
 
+.gest-th-sort {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.gest-th-static {
+  cursor: default;
+}
+
+.gest-th-text {
+  margin-right: 0.35rem;
+  transition: color 0.15s ease;
+}
+
+.gest-th-sort:hover .gest-th-text {
+  color: var(--bs-primary);
+}
+
+.gest-th-icon {
+  font-size: 0.82rem;
+  vertical-align: -0.08em;
+}
+
+.gest-th-icon--active {
+  color: var(--bs-primary);
+}
+
+.gest-th-icon--idle {
+  opacity: 0.35;
+  font-size: 0.72rem;
+}
+
+.gest-status-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  border-radius: 50rem;
+  letter-spacing: 0.03em;
+}
+
+.gest-status-badge--ok {
+  background: color-mix(in srgb, #198754 14%, var(--gest-white)) !important;
+  color: #0f5132 !important;
+  border: 1px solid color-mix(in srgb, #198754 35%, transparent);
+}
+
+.gest-status-badge--off {
+  background: color-mix(in srgb, #dc3545 12%, var(--gest-white)) !important;
+  color: #842029 !important;
+  border: 1px solid color-mix(in srgb, #dc3545 30%, transparent);
+}
+
+.gest-list-pager {
+  border-top: 1px solid var(--gest-border-light) !important;
+  background: color-mix(in srgb, var(--gest-off-white) 88%, var(--gest-white)) !important;
+}
+
+.gest-page-size {
+  min-width: 4.25rem;
+  border-radius: var(--gest-radius-sm);
+  border-color: var(--gest-border-light);
+}
+
+.gest-pager-info strong {
+  color: var(--gest-navy-800);
+  font-weight: 700;
+}
+
+.gest-pager-btns .btn {
+  border-radius: var(--gest-radius-sm);
+}
+
+.gest-pager-btns .btn:first-child {
+  border-top-left-radius: var(--gest-radius-md);
+  border-bottom-left-radius: var(--gest-radius-md);
+}
+
+.gest-pager-btns .btn:last-child {
+  border-top-right-radius: var(--gest-radius-md);
+  border-bottom-right-radius: var(--gest-radius-md);
+}
+
 html.app-dark .gest-data-card .card-footer {
   background: color-mix(in srgb, var(--bs-body-bg) 95%, var(--gest-white)) !important;
+}
+
+html.app-dark .gest-list-pager {
+  background: color-mix(in srgb, var(--bs-body-bg) 92%, var(--gest-white)) !important;
+  border-top-color: var(--gest-border-light) !important;
+  color: var(--bs-body-color);
+}
+
+/* Evitar que text-secondary deje el pie más apagado que el cuerpo de la tabla */
+html.app-dark .gest-list-pager .text-secondary {
+  color: color-mix(in srgb, var(--bs-body-color) 90%, transparent) !important;
+}
+
+html.app-dark .gest-list-pager label.text-secondary {
+  color: var(--bs-body-color) !important;
+}
+
+/* Paginación / acciones: outline-primary con texto claro uniforme en oscuro */
+html.app-dark .gest-list-pager .btn-outline-primary {
+  color: rgba(255, 255, 255, 0.92);
+  border-color: color-mix(in srgb, var(--bs-primary) 55%, rgba(255, 255, 255, 0.45));
+}
+
+html.app-dark .gest-list-pager .btn-outline-primary:hover:not(:disabled) {
+  color: var(--bs-body-bg);
+  background-color: color-mix(in srgb, var(--bs-primary) 82%, #fff);
+  border-color: color-mix(in srgb, var(--bs-primary) 65%, transparent);
+}
+
+html.app-dark .gest-data-card .btn-outline-primary.btn-sm {
+  color: rgba(255, 255, 255, 0.92);
+  border-color: color-mix(in srgb, var(--bs-primary) 55%, rgba(255, 255, 255, 0.45));
+}
+
+html.app-dark .gest-data-card .btn-outline-primary.btn-sm:hover:not(:disabled) {
+  color: var(--bs-body-bg);
+  background-color: color-mix(in srgb, var(--bs-primary) 82%, #fff);
+  border-color: color-mix(in srgb, var(--bs-primary) 65%, transparent);
+}
+
+html.app-dark .gest-pager-info strong {
+  color: var(--gest-white);
+}
+
+html.app-dark .gest-status-badge--ok {
+  background: color-mix(in srgb, #75b798 18%, var(--bs-body-bg)) !important;
+  color: #d1e7dd !important;
+  border-color: color-mix(in srgb, #75b798 40%, transparent);
+}
+
+html.app-dark .gest-status-badge--off {
+  background: color-mix(in srgb, #ea868f 16%, var(--bs-body-bg)) !important;
+  color: #f8d7da !important;
+  border-color: color-mix(in srgb, #ea868f 35%, transparent);
 }
 
 /* Badges */

@@ -15,14 +15,14 @@
     <i class="bi bi-plus-lg" aria-hidden="true"></i>
     Nuevo
   </button>
-  <div class="compania-search input-group input-group-sm">
-    <span class="input-group-text compania-search-icon" aria-hidden="true">
+  <div class="gest-list-search input-group input-group-sm">
+    <span class="input-group-text gest-list-search-icon" aria-hidden="true">
       <i class="bi bi-search"></i>
     </span>
     <input
       id="compania-search-input"
       type="search"
-      class="form-control compania-search-input"
+      class="form-control"
       placeholder="Buscar por código, nombre, documento, teléfono…"
       autocomplete="off"
       [value]="searchText()"
@@ -30,7 +30,7 @@
       aria-label="Buscar compañías"
     />
     @if (searchText()) {
-      <button type="button" class="btn btn-outline-secondary compania-search-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+      <button type="button" class="btn btn-outline-secondary gest-list-search-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
     }
@@ -49,108 +49,108 @@
         <table class="table table-hover table-gest compania-table mb-0 align-middle">
       <thead>
         <tr>
-          <th scope="col" class="compania-th-sort" (click)="toggleSort('codigo')">
-            <span class="compania-th-text">Compañía</span>
+          <th scope="col" class="gest-th-sort" (click)="toggleSort('codigo')">
+            <span class="gest-th-text">Compañía</span>
             @switch (sortIconState('codigo')) {
               @case ('asc') {
-                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @case ('desc') {
-                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @default {
-                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+                <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
               }
             }
           </th>
-          <th scope="col" class="compania-th-sort" (click)="toggleSort('nombre')">
-            <span class="compania-th-text">Nombre</span>
+          <th scope="col" class="gest-th-sort" (click)="toggleSort('nombre')">
+            <span class="gest-th-text">Nombre</span>
             @switch (sortIconState('nombre')) {
               @case ('asc') {
-                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @case ('desc') {
-                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @default {
-                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+                <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
               }
             }
           </th>
-          <th scope="col" class="compania-th-sort" (click)="toggleSort('numeroDocumento')">
-            <span class="compania-th-text">Documento</span>
+          <th scope="col" class="gest-th-sort" (click)="toggleSort('numeroDocumento')">
+            <span class="gest-th-text">Documento</span>
             @switch (sortIconState('numeroDocumento')) {
               @case ('asc') {
-                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @case ('desc') {
-                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @default {
-                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+                <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
               }
             }
           </th>
-          <th scope="col" class="compania-th-sort" (click)="toggleSort('telefono1')">
-            <span class="compania-th-text">Teléfono</span>
+          <th scope="col" class="gest-th-sort" (click)="toggleSort('telefono1')">
+            <span class="gest-th-text">Teléfono</span>
             @switch (sortIconState('telefono1')) {
               @case ('asc') {
-                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @case ('desc') {
-                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @default {
-                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+                <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
               }
             }
           </th>
-          <th scope="col" class="compania-th-sort" (click)="toggleSort('telefono2')">
-            <span class="compania-th-text">Teléfono 2</span>
+          <th scope="col" class="gest-th-sort" (click)="toggleSort('telefono2')">
+            <span class="gest-th-text">Teléfono 2</span>
             @switch (sortIconState('telefono2')) {
               @case ('asc') {
-                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @case ('desc') {
-                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @default {
-                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+                <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
               }
             }
           </th>
-          <th scope="col" class="compania-th-static">
-            <span class="compania-th-text">Estado</span>
+          <th scope="col" class="gest-th-static">
+            <span class="gest-th-text">Estado</span>
           </th>
-          <th scope="col" class="compania-th-sort" (click)="toggleSort('ultUsuario')">
-            <span class="compania-th-text">Últ. usu.</span>
+          <th scope="col" class="gest-th-sort" (click)="toggleSort('ultUsuario')">
+            <span class="gest-th-text">Últ. usu.</span>
             @switch (sortIconState('ultUsuario')) {
               @case ('asc') {
-                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @case ('desc') {
-                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @default {
-                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+                <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
               }
             }
           </th>
-          <th scope="col" class="compania-th-sort" (click)="toggleSort('ultMod')">
-            <span class="compania-th-text">Últ. mod.</span>
+          <th scope="col" class="gest-th-sort" (click)="toggleSort('ultMod')">
+            <span class="gest-th-text">Últ. mod.</span>
             @switch (sortIconState('ultMod')) {
               @case ('asc') {
-                <i class="bi bi-sort-up-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @case ('desc') {
-                <i class="bi bi-sort-down-alt compania-th-icon compania-th-icon--active" aria-hidden="true"></i>
+                <i class="bi bi-sort-down-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
               }
               @default {
-                <i class="bi bi-arrow-down-up compania-th-icon compania-th-icon--idle" aria-hidden="true"></i>
+                <i class="bi bi-arrow-down-up gest-th-icon gest-th-icon--idle" aria-hidden="true"></i>
               }
             }
           </th>
-          <th scope="col" class="text-end compania-th-static compania-th-action">Acción</th>
+          <th scope="col" class="text-end gest-th-static compania-th-action">Acción</th>
         </tr>
       </thead>
       <tbody>
@@ -163,9 +163,9 @@
             <td class="compania-tel">{{ c.telefono2 }}</td>
             <td>
               @if (c.activo) {
-                <span class="badge compania-badge compania-badge--ok">Activo</span>
+                <span class="badge gest-status-badge gest-status-badge--ok">Activo</span>
               } @else {
-                <span class="badge compania-badge compania-badge--off">Inactivo</span>
+                <span class="badge gest-status-badge gest-status-badge--off">Inactivo</span>
               }
             </td>
             <td class="compania-meta">{{ c.ultUsuario }}</td>
@@ -216,17 +216,17 @@
         </table>
       </div>
     </div>
-    <div class="card-footer compania-pager d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+    <div class="card-footer gest-list-pager d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
     <div class="d-flex align-items-center gap-2">
       <label class="small mb-0 text-secondary fw-medium" for="pageSizeSel">Filas por página</label>
-      <select id="pageSizeSel" class="form-select form-select-sm compania-page-size" [value]="pageSize()" (change)="setPageSize(+$any($event.target).value)">
+      <select id="pageSizeSel" class="form-select form-select-sm gest-page-size" [value]="pageSize()" (change)="setPageSize(+$any($event.target).value)">
         @for (n of pageSizeOptions; track n) {
           <option [value]="n">{{ n }}</option>
         }
       </select>
     </div>
     <div class="d-flex align-items-center flex-wrap gap-2">
-      <span class="small compania-pager-info">
+      <span class="small gest-pager-info">
         Página <strong>{{ pageIndex() + 1 }}</strong> de <strong>{{ totalPages() }}</strong>
         <span class="text-secondary">
           · {{ sortedRows().length }}
@@ -236,7 +236,7 @@
           registros
         </span>
       </span>
-      <div class="btn-group compania-pager-btns" role="group" aria-label="Paginación">
+      <div class="btn-group gest-pager-btns" role="group" aria-label="Paginación">
         <button
           type="button"
           class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1"
