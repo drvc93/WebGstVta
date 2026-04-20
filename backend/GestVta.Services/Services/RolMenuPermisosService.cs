@@ -4,17 +4,28 @@ using GestVta.Repositories;
 
 namespace GestVta.Services;
 
-public sealed class RolMenuPermisosService(
-    IRolRepository rolRepo,
-    IMenuOpcionRepository menuRepo,
-    IRolMenuPermisoRepository permRepo) : IRolMenuPermisosService
+public sealed class RolMenuPermisosService : IRolMenuPermisosService
 {
+    private readonly IRolRepository _rolRepo;
+    private readonly IMenuOpcionRepository _menuRepo;
+    private readonly IRolMenuPermisoRepository _permRepo;
+
+    public RolMenuPermisosService(
+        IRolRepository rolRepo,
+        IMenuOpcionRepository menuRepo,
+        IRolMenuPermisoRepository permRepo)
+    {
+        _rolRepo = rolRepo;
+        _menuRepo = menuRepo;
+        _permRepo = permRepo;
+    }
+
     public async Task<(IReadOnlyList<RolMenuPermisoFilaDto>? filas, bool rolNotFound)> GetPorRolAsync(int rolId, CancellationToken ct)
     {
-        if (!await rolRepo.ExistsByIdAsync(rolId, ct))
+        if (!await _rolRepo.ExistsByIdAsync(rolId, ct))
             return (null, rolNotFound: true);
-        var menus = await menuRepo.ListOrderedNoTrackingAsync(ct);
-        var perms = await permRepo.ListByRolIdNoTrackingAsync(rolId, ct);
+        var menus = await _menuRepo.ListOrderedNoTrackingAsync(ct);
+        var perms = await _permRepo.ListByRolIdNoTrackingAsync(rolId, ct);
         var map = perms.ToDictionary(p => p.MenuOpcionId);
         var filas = menus.Select(m =>
         {
@@ -28,16 +39,16 @@ public sealed class RolMenuPermisosService(
 
     public async Task<string?> GuardarAsync(int rolId, IReadOnlyList<RolMenuPermisoGuardarDto> filas, CancellationToken ct)
     {
-        if (!await rolRepo.ExistsByIdAsync(rolId, ct))
+        if (!await _rolRepo.ExistsByIdAsync(rolId, ct))
             return "ROL_NOT_FOUND";
         var ids = filas.Select(f => f.MenuOpcionId).Distinct().ToList();
-        var valid = await menuRepo.GetExistingIdsAsync(ids, ct);
+        var valid = await _menuRepo.GetExistingIdsAsync(ids, ct);
         if (valid.Count != ids.Count) return "INVALID_MENU_IDS";
-        var existentes = await permRepo.ListTrackedByRolIdAsync(rolId, ct);
-        permRepo.RemoveRange(existentes);
+        var existentes = await _permRepo.ListTrackedByRolIdAsync(rolId, ct);
+        _permRepo.RemoveRange(existentes);
         foreach (var f in filas.DistinctBy(f => f.MenuOpcionId))
         {
-            permRepo.Add(new RolMenuPermiso
+            _permRepo.Add(new RolMenuPermiso
             {
                 RolId = rolId,
                 MenuOpcionId = f.MenuOpcionId,
@@ -48,7 +59,7 @@ public sealed class RolMenuPermisosService(
             });
         }
 
-        await permRepo.SaveChangesAsync(ct);
+        await _permRepo.SaveChangesAsync(ct);
         return null;
     }
 }

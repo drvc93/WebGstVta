@@ -3,17 +3,28 @@ using GestVta.Repositories;
 
 namespace GestVta.Services;
 
-public sealed class MenuUsuarioArbolService(
-    IUsuarioRolRepository usuarioRolRepo,
-    IMenuOpcionRepository menuRepo,
-    IRolMenuPermisoRepository permRepo) : IMenuUsuarioArbolService
+public sealed class MenuUsuarioArbolService : IMenuUsuarioArbolService
 {
+    private readonly IUsuarioRolRepository _usuarioRolRepo;
+    private readonly IMenuOpcionRepository _menuRepo;
+    private readonly IRolMenuPermisoRepository _permRepo;
+
+    public MenuUsuarioArbolService(
+        IUsuarioRolRepository usuarioRolRepo,
+        IMenuOpcionRepository menuRepo,
+        IRolMenuPermisoRepository permRepo)
+    {
+        _usuarioRolRepo = usuarioRolRepo;
+        _menuRepo = menuRepo;
+        _permRepo = permRepo;
+    }
+
     public async Task<IReadOnlyList<MenuOpcionUsuarioDto>> GetMiArbolAsync(int usuarioId, CancellationToken ct)
     {
-        var roleIds = await usuarioRolRepo.GetRolIdsByUsuarioIdAsync(usuarioId, ct);
+        var roleIds = await _usuarioRolRepo.GetRolIdsByUsuarioIdAsync(usuarioId, ct);
         if (roleIds.Count == 0) return Array.Empty<MenuOpcionUsuarioDto>();
-        var menus = (await menuRepo.ListActivosOrderedNoTrackingAsync(ct)).ToList();
-        var perms = await permRepo.ListByRolIdsNoTrackingAsync(roleIds, ct);
+        var menus = (await _menuRepo.ListActivosOrderedNoTrackingAsync(ct)).ToList();
+        var perms = await _permRepo.ListByRolIdsNoTrackingAsync(roleIds, ct);
         var merged = new Dictionary<int, (bool L, bool E, bool M, bool D)>();
         foreach (var m in menus)
             merged[m.Id] = (false, false, false, false);

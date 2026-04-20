@@ -1,32 +1,38 @@
-using GestVta.Api.Data;
 using GestVta.Api.Infrastructure;
 using GestVta.Api.Models;
+using GestVta.Services.Maestros;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GestVta.Api.Controllers;
 
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public sealed class CompaniasController(ApplicationDbContext db, FileStoragePaths filePaths) : ControllerBase
+public sealed class CompaniasController : ControllerBase
 {
     private static readonly HashSet<string> LogoExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg",
     };
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Compania>>> GetAll(CancellationToken ct)
+    private readonly ICompaniasService _companias;
+    private readonly FileStoragePaths _filePaths;
+
+    public CompaniasController(ICompaniasService companias, FileStoragePaths filePaths)
     {
-        return await db.Companias.AsNoTracking().OrderBy(c => c.Codigo).ToListAsync(ct);
+        _companias = companias;
+        _filePaths = filePaths;
     }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Compania>>> GetAll(CancellationToken ct) =>
+        Ok(await _companias.GetAllAsync(ct));
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Compania>> GetById(int id, CancellationToken ct)
     {
-        var e = await db.Companias.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id, ct);
+        var e = await _companias.GetByIdAsync(id, ct);
         return e is null ? NotFound() : e;
     }
 
@@ -45,13 +51,13 @@ public sealed class CompaniasController(ApplicationDbContext db, FileStoragePath
         if (!string.IsNullOrEmpty(file.ContentType) && !file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
             return BadRequest(new { message = "El contenido debe ser una imagen." });
 
-        Directory.CreateDirectory(filePaths.CompaniasPhysical);
+        Directory.CreateDirectory(_filePaths.CompaniasPhysical);
         var safeName = $"{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
-        var physical = Path.Combine(filePaths.CompaniasPhysical, safeName);
+        var physical = Path.Combine(_filePaths.CompaniasPhysical, safeName);
         await using (var stream = System.IO.File.Create(physical))
             await file.CopyToAsync(stream, ct);
 
-        var webPath = filePaths.WebPathForCompaniaLogo(safeName);
+        var webPath = _filePaths.WebPathForCompaniaLogo(safeName);
         return Ok(new LogoUploadResponse(webPath));
     }
 
@@ -63,14 +69,14 @@ public sealed class CompaniasController(ApplicationDbContext db, FileStoragePath
         if (string.IsNullOrWhiteSpace(raw))
             return BadRequest(new { message = "Parámetro path requerido." });
 
-        if (!raw.StartsWith(filePaths.StaticRequestPath + "/companias/", StringComparison.OrdinalIgnoreCase))
+        if (!raw.StartsWith(_filePaths.StaticRequestPath + "/companias/", StringComparison.OrdinalIgnoreCase))
             return BadRequest(new { message = "Ruta de logo inválida." });
 
         var fileName = Path.GetFileName(raw.Replace('\\', '/'));
         if (string.IsNullOrWhiteSpace(fileName))
             return BadRequest(new { message = "Ruta de logo inválida." });
 
-        var physical = Path.Combine(filePaths.CompaniasPhysical, fileName);
+        var physical = Path.Combine(_filePaths.CompaniasPhysical, fileName);
         if (System.IO.File.Exists(physical))
             System.IO.File.Delete(physical);
 
@@ -80,47 +86,24 @@ public sealed class CompaniasController(ApplicationDbContext db, FileStoragePath
     [HttpPost]
     public async Task<ActionResult<Compania>> Create([FromBody] Compania entity, CancellationToken ct)
     {
-        entity.Id = 0;
-        entity.UltMod = DateTime.UtcNow;
-        db.Companias.Add(entity);
-        await db.SaveChangesAsync(ct);
-        return CreatedAtAction(nameof(GetById), new { id = entity.Id }, entity);
+        var created = await _companias.CreateAsync(entity, ct);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] Compania dto, CancellationToken ct)
     {
-        var entity = await db.Companias.FindAsync([id], ct);
-        if (entity is null) return NotFound();
-
-        entity.Codigo = dto.Codigo;
-        entity.Nombre = dto.Nombre;
-        entity.TipoDocumentoId = dto.TipoDocumentoId;
-        entity.NumeroDocumento = dto.NumeroDocumento;
-        entity.Direccion = dto.Direccion;
-        entity.PaisId = dto.PaisId;
-        entity.UbigeoId = dto.UbigeoId;
-        entity.Correo = dto.Correo;
-        entity.Activo = dto.Activo;
-        entity.LogoPath = dto.LogoPath;
-        entity.ColorPrimario = dto.ColorPrimario;
-        entity.Telefono1 = dto.Telefono1;
-        entity.Telefono2 = dto.Telefono2;
-        entity.UltUsuario = dto.UltUsuario;
-        entity.UltMod = DateTime.UtcNow;
-
-        await db.SaveChangesAsync(ct);
+        var r = await _companias.UpdateAsync(id, dto, ct);
+        if (r.NotFound) return NotFound();
+        if (r.BadRequest is not null) return BadRequest(r.BadRequest);
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
     {
-        var entity = await db.Companias.FindAsync([id], ct);
-        if (entity is null) return NotFound();
-        db.Companias.Remove(entity);
-        await db.SaveChangesAsync(ct);
-        return NoContent();
+        var r = await _companias.DeleteAsync(id, ct);
+        return r.NotFound ? NotFound() : NoContent();
     }
 
     public sealed record LogoUploadResponse(string Path);

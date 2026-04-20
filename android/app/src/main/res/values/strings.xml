@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GestVta</string>
+    <string name="badge_text">GESTVTA</string>
+    <string name="title_text">Gestion comercial moderna para tu equipo.</string>
+    <string name="subtitle_text">Accede de forma segura, elige tu compania y empieza a trabajar en segundos.</string>
+    <string name="feature_1">Control por roles y permisos</string>
+    <string name="feature_2">Catalogos y maestros centralizados</string>
+    <string name="feature_3">Experiencia optimizada para móvil</string>
+    <string name="login_title">GestVta</string>
+    <string name="login_subtitle">Inicie sesion para continuar</string>
+    <string name="hint_username">Usuario</string>
+    <string name="hint_password">Contrasena</string>
+    <string name="btn_login">Entrar</string>
+    <string name="company_selection_title">Selecciona tu compañía</string>
+    <string name="select_company_prompt">Elige una compañía</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+</resources>

@@ -2,16 +2,21 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using GestVta.Api.Models;
+using GestVta.Services;
+using GestVta.Services.Dtos;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace GestVta.Api.Infrastructure;
 
-public sealed record AccessTokenResult(string Token, DateTime ExpiresAtUtc);
-
-public sealed class JwtTokenService(IOptions<JwtOptions> options)
+public sealed class JwtTokenService : IAccessTokenService
 {
-    private readonly JwtOptions _opts = options.Value;
+    private readonly JwtOptions _opts;
+
+    public JwtTokenService(IOptions<JwtOptions> options)
+    {
+        _opts = options.Value;
+    }
 
     public AccessTokenResult CreateAccessToken(Usuario user, IReadOnlyList<string> roles, string colorPrimario, string? companiaNombre, int? companiaIdEfectiva = null)
     {

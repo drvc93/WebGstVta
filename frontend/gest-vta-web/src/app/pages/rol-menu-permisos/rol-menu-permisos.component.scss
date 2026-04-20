@@ -176,9 +176,10 @@
   opacity: 0.38;
 }
 
-/* Raíz del menú: bloque visual */
-.rol-perm-row--section {
-  background: color-mix(in srgb, var(--bs-tertiary-bg) 65%, transparent);
+/* Raíz del menú: bloque visual (aplicado a celdas para no ser pisado por estilos base de table) */
+.rol-perm-row--section > td {
+  background: color-mix(in srgb, var(--bs-primary) 16%, var(--bs-tertiary-bg)) !important;
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--bs-primary) 55%, transparent);
 }
 
 .rol-perm-row--section .rol-perm-name {
@@ -190,10 +191,20 @@
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--bs-border-color) 55%, transparent);
 }
 
+/* Los hijos quedan en fondo normal para separar visualmente el grupo padre */
+.rol-perm-row--child > td {
+  background: var(--bs-body-bg) !important;
+}
+
 .rol-perm-row--muted:not(.rol-perm-row--section) .rol-perm-name {
   color: var(--bs-secondary-color);
 }
 
 .rol-perm-row--muted.rol-perm-row--section {
   opacity: 0.92;
+}
+
+html.app-dark .rol-perm-row--section > td {
+  background: color-mix(in srgb, var(--bs-primary) 30%, var(--bs-body-bg)) !important;
+  box-shadow: inset 3px 0 0 color-mix(in srgb, #9ec5fe 70%, transparent);
 }

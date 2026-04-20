@@ -25,6 +25,34 @@ export interface TipoDocumento {
   activo: boolean;
 }
 
+export interface Moneda {
+  id: number;
+  codigo: string;
+  simbolo: string;
+  nombre: string;
+  activo: boolean;
+}
+
+export interface TipoCambio {
+  id: number;
+  monedaId: number;
+  fecha: string;
+  valorCompra: number;
+  valorVenta: number;
+  activo: boolean;
+  ultUsuario?: string | null;
+  ultMod?: string | null;
+}
+
+export interface Marca {
+  id: number;
+  codigo: string;
+  nombre: string;
+  activo: boolean;
+  ultUsuario?: string | null;
+  ultMod?: string | null;
+}
+
 export interface Pais {
   id: number;
   codigo: string;

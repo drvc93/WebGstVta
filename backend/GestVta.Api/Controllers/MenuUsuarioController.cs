@@ -10,14 +10,21 @@ namespace GestVta.Api.Controllers;
 [ApiController]
 [Route("api/menu-usuario")]
 [Authorize]
-public sealed class MenuUsuarioController(IMenuUsuarioArbolService arbolService) : ControllerBase
+public sealed class MenuUsuarioController : ControllerBase
 {
+    private readonly IMenuUsuarioArbolService _arbolService;
+
+    public MenuUsuarioController(IMenuUsuarioArbolService arbolService)
+    {
+        _arbolService = arbolService;
+    }
+
     [HttpGet("mi-arbol")]
     public async Task<ActionResult<IReadOnlyList<MenuOpcionUsuarioDto>>> MiArbol(CancellationToken ct)
     {
         var userId = ParseUserId(User);
         if (userId is null) return Unauthorized();
-        var result = await arbolService.GetMiArbolAsync(userId.Value, ct);
+        var result = await _arbolService.GetMiArbolAsync(userId.Value, ct);
         return Ok(result);
     }
 

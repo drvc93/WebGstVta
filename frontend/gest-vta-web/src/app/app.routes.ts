@@ -11,6 +11,14 @@ import { LoginComponent } from './pages/login/login.component';
 import { PlaceholderPageComponent } from './pages/placeholder-page.component';
 import { MenuOpcionesListComponent } from './pages/menu-opciones/menu-opciones-list.component';
 import { RolMenuPermisosComponent } from './pages/rol-menu-permisos/rol-menu-permisos.component';
+import { MonedaFormComponent } from './pages/moneda/moneda-form.component';
+import { MonedaListComponent } from './pages/moneda/moneda-list.component';
+import { TipoDocumentoFormComponent } from './pages/tipo-documento/tipo-documento-form.component';
+import { TipoDocumentoListComponent } from './pages/tipo-documento/tipo-documento-list.component';
+import { TipoCambioFormComponent } from './pages/tipo-cambio/tipo-cambio-form.component';
+import { TipoCambioListComponent } from './pages/tipo-cambio/tipo-cambio-list.component';
+import { MarcaListComponent } from './pages/marca/marca-list.component';
+import { MarcaFormComponent } from './pages/marca/marca-form.component';
 
 const ph = (title: string, api: string) => ({
   component: PlaceholderPageComponent,
@@ -37,9 +45,15 @@ export const routes: Routes = [
       { path: 'maestros/adicionales', ...ph('Adicionales', '/api/adicionales') },
       { path: 'maestros/rpta-seguimiento', ...ph('Respuesta seguimiento', '/api/rptas-seguimiento') },
       { path: 'maestros/forma-pago', ...ph('Forma pago', '/api/formas-pago') },
-      { path: 'maestros/moneda', ...ph('Moneda', '/api/monedas') },
-      { path: 'maestros/tipo-documento', ...ph('Tipo documento', '/api/tipos-documento') },
-      { path: 'maestros/tipo-cambio', ...ph('Tipo cambio', '/api/tipos-cambio') },
+      { path: 'maestros/moneda/nuevo', component: MonedaFormComponent },
+      { path: 'maestros/moneda/:id', component: MonedaFormComponent },
+      { path: 'maestros/moneda', component: MonedaListComponent },
+      { path: 'maestros/tipo-documento/nuevo', component: TipoDocumentoFormComponent },
+      { path: 'maestros/tipo-documento/:id', component: TipoDocumentoFormComponent },
+      { path: 'maestros/tipo-documento', component: TipoDocumentoListComponent },
+      { path: 'maestros/tipo-cambio/nuevo', component: TipoCambioFormComponent },
+      { path: 'maestros/tipo-cambio/:id', component: TipoCambioFormComponent },
+      { path: 'maestros/tipo-cambio', component: TipoCambioListComponent },
       { path: 'maestros/segmento', ...ph('Segmento', '/api/segmentos') },
       { path: 'entidades/cliente', ...ph('Registro cliente', '/api/clientes') },
       { path: 'entidades/agencia-transporte', ...ph('Agencia transporte', '/api/agencias-transporte') },
@@ -49,7 +63,9 @@ export const routes: Routes = [
       { path: 'producto/items', ...ph('Items', '/api/items') },
       { path: 'producto/unidad', ...ph('Unidad', '/api/unidades') },
       { path: 'producto/familia', ...ph('Familia', '/api/familias') },
-      { path: 'producto/marca', ...ph('Marca', '/api/marcas') },
+      { path: 'producto/marca/nuevo', component: MarcaFormComponent },
+      { path: 'producto/marca/:id', component: MarcaFormComponent },
+      { path: 'producto/marca', component: MarcaListComponent },
       { path: 'producto/modelo', ...ph('Modelo', '/api/modelos') },
     ],
   },

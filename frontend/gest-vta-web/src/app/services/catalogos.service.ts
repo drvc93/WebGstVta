@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import type { Pais, Rol, TipoDocumento, Ubigeo } from '../models/api.models';
+import type { Moneda, Pais, Rol, TipoDocumento, Ubigeo } from '../models/api.models';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogosService {
@@ -23,5 +23,9 @@ export class CatalogosService {
 
   roles(): Observable<Rol[]> {
     return this.http.get<Rol[]>(`${this.root}/api/roles`);
+  }
+
+  monedas(): Observable<Moneda[]> {
+    return this.http.get<Moneda[]>(`${this.root}/api/monedas`);
   }
 }

@@ -4,17 +4,26 @@ using GestVta.Repositories;
 
 namespace GestVta.Services;
 
-public sealed class MenuOpcionesService(IMenuOpcionRepository menuRepo, IRolMenuPermisoRepository permRepo) : IMenuOpcionesService
+public sealed class MenuOpcionesService : IMenuOpcionesService
 {
+    private readonly IMenuOpcionRepository _menuRepo;
+    private readonly IRolMenuPermisoRepository _permRepo;
+
+    public MenuOpcionesService(IMenuOpcionRepository menuRepo, IRolMenuPermisoRepository permRepo)
+    {
+        _menuRepo = menuRepo;
+        _permRepo = permRepo;
+    }
+
     public async Task<IReadOnlyList<MenuOpcionDto>> GetAllAsync(CancellationToken ct)
     {
-        var rows = await menuRepo.ListOrderedNoTrackingAsync(ct);
+        var rows = await _menuRepo.ListOrderedNoTrackingAsync(ct);
         return rows.Select(MapDto).ToList();
     }
 
     public async Task<MenuOpcionDto?> GetByIdAsync(int id, CancellationToken ct)
     {
-        var m = await menuRepo.GetByIdNoTrackingAsync(id, ct);
+        var m = await _menuRepo.GetByIdNoTrackingAsync(id, ct);
         return m is null ? null : MapDto(m);
     }
 
@@ -32,14 +41,14 @@ public sealed class MenuOpcionesService(IMenuOpcionRepository menuRepo, IRolMenu
             Orden = dto.Orden,
             Activo = dto.Activo,
         };
-        menuRepo.Add(e);
-        await menuRepo.SaveChangesAsync(ct);
+        _menuRepo.Add(e);
+        await _menuRepo.SaveChangesAsync(ct);
         return (MapDto(e), null);
     }
 
     public async Task<string?> UpdateAsync(int id, MenuOpcionSaveDto dto, CancellationToken ct)
     {
-        var e = await menuRepo.GetByIdTrackingAsync(id, ct);
+        var e = await _menuRepo.GetByIdTrackingAsync(id, ct);
         if (e is null) return "NOT_FOUND";
         var err = await ValidateSaveAsync(dto, excludeId: id, ct);
         if (err is not null) return err;
@@ -51,20 +60,20 @@ public sealed class MenuOpcionesService(IMenuOpcionRepository menuRepo, IRolMenu
         e.ParentId = dto.ParentId;
         e.Orden = dto.Orden;
         e.Activo = dto.Activo;
-        await menuRepo.SaveChangesAsync(ct);
+        await _menuRepo.SaveChangesAsync(ct);
         return null;
     }
 
     public async Task<string?> DeleteAsync(int id, CancellationToken ct)
     {
-        var e = await menuRepo.GetByIdWithHijosTrackingAsync(id, ct);
+        var e = await _menuRepo.GetByIdWithHijosTrackingAsync(id, ct);
         if (e is null) return "NOT_FOUND";
         if (e.Hijos.Count > 0) return "HAS_CHILDREN";
-        var permisos = await permRepo.ListTrackedByMenuOpcionIdAsync(id, ct);
+        var permisos = await _permRepo.ListTrackedByMenuOpcionIdAsync(id, ct);
         if (permisos.Count > 0)
-            permRepo.RemoveRange(permisos);
-        menuRepo.Remove(e);
-        await menuRepo.SaveChangesAsync(ct);
+            _permRepo.RemoveRange(permisos);
+        _menuRepo.Remove(e);
+        await _menuRepo.SaveChangesAsync(ct);
         return null;
     }
 
@@ -73,9 +82,9 @@ public sealed class MenuOpcionesService(IMenuOpcionRepository menuRepo, IRolMenu
         if (string.IsNullOrWhiteSpace(dto.Codigo)) return "El código es obligatorio.";
         if (string.IsNullOrWhiteSpace(dto.Nombre)) return "El nombre es obligatorio.";
         var cod = dto.Codigo.Trim().ToUpperInvariant();
-        if (await menuRepo.CodigoExistsExcludingIdAsync(cod, excludeId, ct))
+        if (await _menuRepo.CodigoExistsExcludingIdAsync(cod, excludeId, ct))
             return "Ya existe otra opción con ese código.";
-        if (dto.ParentId is { } pid && !await menuRepo.ExistsByIdAsync(pid, ct))
+        if (dto.ParentId is { } pid && !await _menuRepo.ExistsByIdAsync(pid, ct))
             return "El padre indicado no existe.";
         return null;
     }

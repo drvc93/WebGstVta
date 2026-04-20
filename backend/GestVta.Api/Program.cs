@@ -79,7 +79,7 @@ builder.Host.UseSerilog((context, _, loggerConfig) =>
 
 builder.Services.AddGestVtaPersistence(builder.Configuration);
 builder.Services.AddGestVtaRepositories();
-builder.Services.AddGestVtaApplicationServices();
+builder.Services.AddGestVtaApplicationServices(builder.Configuration);
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>(
@@ -104,6 +104,7 @@ builder.Services.AddOptions<JwtOptions>()
         "Jwt:Issuer, Jwt:Audience y Jwt:Key (>=32 bytes UTF-8) son obligatorios.");
 
 builder.Services.AddSingleton<JwtTokenService>();
+builder.Services.AddSingleton<IAccessTokenService>(sp => sp.GetRequiredService<JwtTokenService>());
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 var jwtKey = jwtSection["Key"];
@@ -138,6 +139,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddHttpClient();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

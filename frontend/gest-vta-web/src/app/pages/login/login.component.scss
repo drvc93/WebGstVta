@@ -1,5 +1,155 @@
 .login-page {
-  background: var(--gest-off-white, #f5f8fc);
+  min-height: 100vh;
+  padding: 1.25rem;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(1100px 520px at 8% 0%, color-mix(in srgb, var(--bs-primary) 16%, #ffffff) 0%, transparent 64%),
+    radial-gradient(900px 480px at 100% 100%, color-mix(in srgb, var(--bs-primary) 12%, #ffffff) 0%, transparent 62%),
+    #f2f5fb;
+}
+
+.login-shell {
+  min-height: min(680px, calc(100vh - 2.5rem));
+  display: grid;
+  grid-template-columns: minmax(340px, 58%) minmax(330px, 42%);
+  gap: 0;
+  align-items: stretch;
+  width: min(100%, 1120px);
+  margin-inline: auto;
+  background: #ffffff;
+  border-radius: 1.35rem;
+  overflow: hidden;
+  border: 1px solid #e7ebf3;
+  box-shadow: 0 22px 52px rgba(15, 39, 68, 0.14);
+}
+
+.login-hero {
+  position: relative;
+  border-radius: 0;
+  padding: clamp(1.25rem, 3vw, 2.4rem);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--bs-primary) 78%, #6f8cff) 0%,
+      color-mix(in srgb, var(--bs-primary) 62%, #071a4d) 68%
+    ),
+    url('../../../styles/login-system-bg.svg'),
+    color-mix(in srgb, var(--bs-primary) 72%, #1b33bf);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: soft-light;
+  color: #f5f8ff;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.login-hero::after {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  right: -120px;
+  bottom: -120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.18) 0%, transparent 68%);
+}
+
+.login-hero__badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.26rem 0.7rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-hero__title {
+  margin: 0 0 0.8rem;
+  font-size: clamp(1.35rem, 2vw, 2.1rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  max-width: 28rem;
+}
+
+.login-hero__text {
+  margin: 0 0 1.25rem;
+  max-width: 30rem;
+  color: rgba(235, 243, 255, 0.92);
+}
+
+.login-hero__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.login-hero__list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(240, 246, 255, 0.95);
+}
+
+.login-hero__list .bi {
+  color: color-mix(in srgb, var(--bs-primary) 28%, #ffffff);
+}
+
+.login-panel {
+  display: grid;
+  align-items: center;
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+  justify-items: stretch;
+  background: #ffffff;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 410px;
+  margin-inline: auto;
+  border-radius: 0.9rem;
+  border: 1px solid #eef1f6;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 12px 30px rgba(13, 30, 56, 0.11);
+}
+
+.login-card .card-body {
+  padding: 1.35rem;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.login-brand__name {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.login-brand__hint {
+  color: var(--bs-secondary-color);
+  font-size: 0.84rem;
+}
+
+.login-card .form-control {
+  min-height: 2.55rem;
+}
+
+.login-card .btn-primary {
+  min-height: 2.55rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
 }
 
 .login-mark {
@@ -22,12 +172,24 @@
 }
 
 html.app-dark .login-page {
-  background: var(--bs-body-bg, #0c1628);
+  background:
+    radial-gradient(1200px 560px at 12% 0%, color-mix(in srgb, var(--bs-primary) 24%, transparent) 0%, transparent 68%),
+    #0a1324;
+}
+
+html.app-dark .login-shell {
+  background: #0f1d34;
+  border-color: color-mix(in srgb, var(--bs-border-color) 65%, transparent);
+}
+
+html.app-dark .login-card {
+  background: color-mix(in srgb, var(--bs-body-bg) 92%, #16233a);
+  border: 1px solid color-mix(in srgb, var(--bs-border-color) 70%, transparent);
 }
 
 /* —— Paso selección compañía —— */
 .login-compania-step {
-  max-width: 28rem;
+  max-width: 100%;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow:
@@ -35,6 +197,27 @@ html.app-dark .login-page {
     0 12px 40px color-mix(in srgb, var(--gest-navy-900) 10%, transparent);
   animation: login-step-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   border: 1px solid color-mix(in srgb, var(--gest-border-light, #dee2e6) 85%, transparent);
+}
+
+@media (max-width: 980px) {
+  .login-page {
+    padding: 0.8rem;
+  }
+
+  .login-shell {
+    min-height: calc(100vh - 1.6rem);
+    grid-template-columns: 1fr;
+    width: min(100%, 460px);
+    border-radius: 1rem;
+  }
+
+  .login-hero {
+    display: none;
+  }
+
+  .login-panel {
+    padding: 1rem;
+  }
 }
 
 @keyframes login-step-in {

@@ -59,9 +59,11 @@ GO
 
 /* Monedas */
 IF NOT EXISTS (SELECT 1 FROM dbo.Moneda WHERE Codigo = N'PEN')
-    INSERT INTO dbo.Moneda (Codigo, Simbolo, Nombre, Activo) VALUES (N'PEN', N'S/', N'Sol', 1);
+    INSERT INTO dbo.Moneda (Codigo, Simbolo, Nombre, Activo) VALUES (N'PEN', N'S/', N'Sol peruano', 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Moneda WHERE Codigo = N'USD')
-    INSERT INTO dbo.Moneda (Codigo, Simbolo, Nombre, Activo) VALUES (N'USD', N'US$', N'Dólar', 1);
+    INSERT INTO dbo.Moneda (Codigo, Simbolo, Nombre, Activo) VALUES (N'USD', N'US$', N'Dólar estadounidense', 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.Moneda WHERE Codigo = N'EUR')
+    INSERT INTO dbo.Moneda (Codigo, Simbolo, Nombre, Activo) VALUES (N'EUR', N'€', N'Euro', 1);
 GO
 
 /* Maestros varios */

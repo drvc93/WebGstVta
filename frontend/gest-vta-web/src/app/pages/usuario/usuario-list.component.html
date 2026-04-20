@@ -6,12 +6,12 @@
   </nav>
 </div>
 
-@if (error()) {
-  <p class="error alert alert-danger py-2 px-3">{{ error() }}</p>
+@if (vm.error()) {
+  <p class="error alert alert-danger py-2 px-3">{{ vm.error() }}</p>
 }
 
 <div class="toolbar gest-toolbar d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-  <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1 rounded-pill px-3" (click)="nuevo()">
+  <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1 rounded-pill px-3" (click)="vm.nuevo()">
     <i class="bi bi-plus-lg" aria-hidden="true"></i>
     Nuevo
   </button>
@@ -24,19 +24,19 @@
       class="form-control"
       placeholder="Buscar por usuario, nombre, roles…"
       autocomplete="off"
-      [value]="searchText()"
-      (input)="setSearch($any($event.target).value)"
+      [value]="vm.searchText()"
+      (input)="vm.setSearch($any($event.target).value)"
       aria-label="Buscar usuarios"
     />
-    @if (searchText()) {
-      <button type="button" class="btn btn-outline-secondary gest-list-search-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+    @if (vm.searchText()) {
+      <button type="button" class="btn btn-outline-secondary gest-list-search-clear" (click)="vm.clearSearch()" aria-label="Limpiar búsqueda">
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
     }
   </div>
 </div>
 
-@if (loading()) {
+@if (vm.loading()) {
   <div class="gest-loading-panel" role="status" aria-live="polite">
     <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
     <span>Cargando usuarios…</span>
@@ -48,9 +48,9 @@
         <table class="table table-hover table-gest usuario-table mb-0 align-middle">
           <thead>
             <tr>
-              <th scope="col" class="gest-th-sort" (click)="toggleSort('username')">
+              <th scope="col" class="gest-th-sort" (click)="vm.toggleSort('username')">
                 <span class="gest-th-text">Usuario</span>
-                @switch (sortIconState('username')) {
+                @switch (vm.sortIconState('username')) {
                   @case ('asc') {
                     <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
@@ -62,9 +62,9 @@
                   }
                 }
               </th>
-              <th scope="col" class="gest-th-sort" (click)="toggleSort('nombreMostrar')">
+              <th scope="col" class="gest-th-sort" (click)="vm.toggleSort('nombreMostrar')">
                 <span class="gest-th-text">Nombre</span>
-                @switch (sortIconState('nombreMostrar')) {
+                @switch (vm.sortIconState('nombreMostrar')) {
                   @case ('asc') {
                     <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
@@ -78,9 +78,9 @@
               </th>
               <th scope="col" class="gest-th-static"><span class="gest-th-text">Compañías</span></th>
               <th scope="col" class="gest-th-static"><span class="gest-th-text">Roles</span></th>
-              <th scope="col" class="gest-th-sort" (click)="toggleSort('activo')">
+              <th scope="col" class="gest-th-sort" (click)="vm.toggleSort('activo')">
                 <span class="gest-th-text">Estado</span>
-                @switch (sortIconState('activo')) {
+                @switch (vm.sortIconState('activo')) {
                   @case ('asc') {
                     <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
@@ -92,9 +92,9 @@
                   }
                 }
               </th>
-              <th scope="col" class="gest-th-sort" (click)="toggleSort('fechaCreacion')">
+              <th scope="col" class="gest-th-sort" (click)="vm.toggleSort('fechaCreacion')">
                 <span class="gest-th-text">Alta</span>
-                @switch (sortIconState('fechaCreacion')) {
+                @switch (vm.sortIconState('fechaCreacion')) {
                   @case ('asc') {
                     <i class="bi bi-sort-up-alt gest-th-icon gest-th-icon--active" aria-hidden="true"></i>
                   }
@@ -110,12 +110,12 @@
             </tr>
           </thead>
           <tbody>
-            @for (u of pageRows(); track u.id) {
+            @for (u of vm.pageRows(); track u.id) {
               <tr>
                 <td class="usuario-code">{{ u.username }}</td>
                 <td [title]="u.nombreMostrar">{{ u.nombreMostrar }}</td>
-                <td class="usuario-meta small">{{ companiasLabel(u) }}</td>
-                <td class="usuario-meta small">{{ rolesLabel(u) }}</td>
+                <td class="usuario-meta small">{{ vm.companiasLabel(u) }}</td>
+                <td class="usuario-meta small">{{ vm.rolesLabel(u) }}</td>
                 <td>
                   @if (u.activo) {
                     <span class="badge gest-status-badge gest-status-badge--ok">Activo</span>
@@ -129,7 +129,7 @@
                     type="button"
                     class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 rounded-pill px-2"
                     title="Editar"
-                    (click)="editar(u.id)"
+                    (click)="vm.editar(u.id)"
                   >
                     <i class="bi bi-pencil" aria-hidden="true"></i>
                     Editar
@@ -137,21 +137,21 @@
                 </td>
               </tr>
             }
-            @if (pageRows().length === 0) {
+            @if (vm.pageRows().length === 0) {
               <tr>
                 <td colspan="7" class="gest-empty-cell">
-                  @if (rows().length === 0) {
+                  @if (vm.rows().length === 0) {
                     <div class="gest-empty-state">
                       <i class="bi bi-inbox" aria-hidden="true"></i>
                       <span class="gest-empty-title">No hay usuarios</span>
                       <p class="gest-empty-hint">Pulse <strong>Nuevo</strong> para registrar el primero.</p>
                     </div>
-                  } @else if (searchText().trim()) {
+                  } @else if (vm.searchText().trim()) {
                     <div class="gest-empty-state">
                       <i class="bi bi-search" aria-hidden="true"></i>
                       <span class="gest-empty-title">Sin resultados</span>
                       <p class="gest-empty-hint mb-2">Ningún usuario coincide con la búsqueda.</p>
-                      <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" (click)="clearSearch()">Limpiar búsqueda</button>
+                      <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" (click)="vm.clearSearch()">Limpiar búsqueda</button>
                     </div>
                   } @else {
                     <div class="gest-empty-state">
@@ -171,25 +171,25 @@
         <select
           id="usuarioPageSizeSel"
           class="form-select form-select-sm gest-page-size"
-          [value]="pageSize()"
-          (change)="setPageSize(+$any($event.target).value)"
+          [value]="vm.pageSize()"
+          (change)="vm.setPageSize(+$any($event.target).value)"
         >
-          @for (n of pageSizeOptions; track n) {
+          @for (n of vm.pageSizeOptions; track n) {
             <option [value]="n">{{ n }}</option>
           }
         </select>
       </div>
       <div class="d-flex align-items-center flex-wrap gap-2">
         <span class="small gest-pager-info">
-          Página <strong>{{ pageIndex() + 1 }}</strong> de <strong>{{ totalPages() }}</strong>
-          <span class="text-secondary"> · {{ sortedRows().length }} registros</span>
+          Página <strong>{{ vm.pageIndex() + 1 }}</strong> de <strong>{{ vm.totalPages() }}</strong>
+          <span class="text-secondary"> · {{ vm.sortedRows().length }} registros</span>
         </span>
         <div class="btn-group gest-pager-btns" role="group" aria-label="Paginación">
-          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="pageIndex() === 0" (click)="prevPage()">
+          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="vm.pageIndex() === 0" (click)="vm.prevPage()">
             <i class="bi bi-chevron-left" aria-hidden="true"></i>
             Anterior
           </button>
-          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="pageIndex() >= totalPages() - 1" (click)="nextPage()">
+          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="vm.pageIndex() >= vm.totalPages() - 1" (click)="vm.nextPage()">
             Siguiente
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
           </button>

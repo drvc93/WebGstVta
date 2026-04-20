@@ -38,3 +38,15 @@ temp-hash/
 .env.*
 **/appsettings.Development.json
 /backend/GestVta.Api/Logs
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+android/.idea/
+android/.cxx/
+android/.externalNativeBuild/
+android/local.properties
+*.apk
+*.ap_
+*.keystore
+*.jks

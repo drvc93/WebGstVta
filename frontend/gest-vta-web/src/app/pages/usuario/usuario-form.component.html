@@ -1,7 +1,7 @@
 <div class="usuario-form-page">
   <header class="page-head gest-page-head usuario-form-page-head d-flex flex-wrap align-items-baseline justify-content-between gap-2">
     <div>
-      <h1 class="h3 mb-1 gest-page-title">{{ isEdit() ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
+      <h1 class="h3 mb-1 gest-page-title">{{ vm.isEdit() ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
       <p class="small text-secondary mb-0 usuario-form-page-lead">
         Complete cada bloque y pulse <strong>Guardar</strong> al final. Los roles son obligatorios; las compañías son opcionales.
       </p>
@@ -12,7 +12,7 @@
     </nav>
   </header>
 
-  @if (loading()) {
+  @if (vm.loading()) {
     <div class="card gest-panel usuario-form-panel usuario-form-panel--loading" role="status" aria-live="polite">
       <div class="card-body gest-loading-panel usuario-form-loading-inner">
         <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
@@ -20,7 +20,7 @@
       </div>
     </div>
   } @else {
-    <form class="usuario-form-stack" [formGroup]="form" (ngSubmit)="guardar()">
+    <form class="usuario-form-stack" [formGroup]="vm.form" (ngSubmit)="vm.guardar()">
       <article class="card gest-panel usuario-form-panel shadow-sm" aria-labelledby="usuario-datos-title">
         <div class="card-header usuario-form-panel-head bg-body-tertiary border-bottom py-2 px-3">
           <div class="d-flex align-items-start gap-2">
@@ -38,26 +38,26 @@
             <div class="usuario-form-field">
               <label class="form-label" for="uUsername">Usuario</label>
               <input id="uUsername" class="form-control" formControlName="username" autocomplete="username" />
-              @if (form.controls.username.touched && form.controls.username.invalid) {
+              @if (vm.form.controls.username.touched && vm.form.controls.username.invalid) {
                 <div class="invalid-feedback d-block">Obligatorio.</div>
               }
             </div>
             <div class="usuario-form-field usuario-form-field--password">
               <label class="form-label" for="uPassword">Contraseña</label>
               <input id="uPassword" type="password" class="form-control" formControlName="password" autocomplete="new-password" />
-              @if (isEdit()) {
+              @if (vm.isEdit()) {
                 <p class="usuario-form-hint mb-0">Deje en blanco para no cambiar la contraseña.</p>
               } @else {
                 <p class="usuario-form-hint mb-0">Mínimo 4 caracteres.</p>
               }
-              @if (form.controls.password.touched && form.controls.password.invalid) {
+              @if (vm.form.controls.password.touched && vm.form.controls.password.invalid) {
                 <div class="invalid-feedback d-block">Obligatoria al crear; mínimo 4 caracteres.</div>
               }
             </div>
             <div class="usuario-form-field">
               <label class="form-label" for="uNombre">Nombre a mostrar</label>
               <input id="uNombre" class="form-control" formControlName="nombreMostrar" autocomplete="name" />
-              @if (form.controls.nombreMostrar.touched && form.controls.nombreMostrar.invalid) {
+              @if (vm.form.controls.nombreMostrar.touched && vm.form.controls.nombreMostrar.invalid) {
                 <div class="invalid-feedback d-block">Obligatorio.</div>
               }
             </div>
@@ -92,35 +92,35 @@
             <select
               id="usuarioAddCompania"
               class="form-select usuario-form-select-add"
-              (change)="onAgregarCompania($any($event.target))"
+              (change)="vm.onAgregarCompania($any($event.target))"
             >
               <option value="">Seleccione una compañía…</option>
-              @for (c of companiasParaAgregar(); track c.id) {
+              @for (c of vm.companiasParaAgregar(); track c.id) {
                 <option [value]="c.id">{{ c.codigo }} — {{ c.nombre }}</option>
               }
             </select>
-            @if (companiaIdsOrden().length === 0) {
+            @if (vm.companiaIdsOrden().length === 0) {
               <p class="usuario-form-empty small text-muted mb-0 mt-3">Ninguna compañía asociada (opcional).</p>
             } @else {
               <ul class="usuario-compania-list mt-3">
-                @for (cid of companiaIdsOrden(); track cid; let idx = $index) {
+                @for (cid of vm.companiaIdsOrden(); track cid; let idx = $index) {
                   <li class="usuario-compania-item">
                     <span class="usuario-compania-item__order" aria-hidden="true">{{ idx + 1 }}</span>
-                    <span class="usuario-compania-item__label">{{ companiaLabel(cid) }}</span>
+                    <span class="usuario-compania-item__label">{{ vm.companiaLabel(cid) }}</span>
                     <div class="usuario-compania-item__actions btn-group" role="group" aria-label="Orden y quitar">
-                      <button type="button" class="btn btn-outline-secondary" [disabled]="idx === 0" (click)="moverCompania(cid, -1)" title="Subir">
+                      <button type="button" class="btn btn-outline-secondary" [disabled]="idx === 0" (click)="vm.moverCompania(cid, -1)" title="Subir">
                         <i class="bi bi-chevron-up" aria-hidden="true"></i>
                       </button>
                       <button
                         type="button"
                         class="btn btn-outline-secondary"
-                        [disabled]="idx >= companiaIdsOrden().length - 1"
-                        (click)="moverCompania(cid, 1)"
+                        [disabled]="idx >= vm.companiaIdsOrden().length - 1"
+                        (click)="vm.moverCompania(cid, 1)"
                         title="Bajar"
                       >
                         <i class="bi bi-chevron-down" aria-hidden="true"></i>
                       </button>
-                      <button type="button" class="btn btn-outline-danger" (click)="quitarCompania(cid)" title="Quitar de la lista">
+                      <button type="button" class="btn btn-outline-danger" (click)="vm.quitarCompania(cid)" title="Quitar de la lista">
                         <i class="bi bi-trash3" aria-hidden="true"></i>
                       </button>
                     </div>
@@ -144,14 +144,14 @@
         </div>
         <div class="card-body usuario-form-panel-body">
           <div class="usuario-roles-grid">
-            @for (r of rolesActivos(); track r.id) {
+            @for (r of vm.rolesActivos(); track r.id) {
               <label class="usuario-role-tile" [for]="'rol-' + r.id">
                 <input
                   class="form-check-input usuario-role-tile__input"
                   type="checkbox"
                   [id]="'rol-' + r.id"
-                  [checked]="isRolChecked(r.id)"
-                  (change)="toggleRol(r.id, $any($event.target).checked)"
+                  [checked]="vm.isRolChecked(r.id)"
+                  (change)="vm.toggleRol(r.id, $any($event.target).checked)"
                 />
                 <span class="usuario-role-tile__text">
                   <span class="usuario-role-tile__name">{{ r.nombre }}</span>
@@ -165,13 +165,13 @@
 
       <footer class="usuario-form-actions card gest-panel border shadow-sm">
         <div class="card-body py-3 usuario-form-actions-inner">
-          <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="saving()">
-            @if (saving()) {
+          <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="vm.saving()">
+            @if (vm.saving()) {
               <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
             }
             Guardar
           </button>
-          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="volver()" [disabled]="saving()">Cancelar</button>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="vm.volver()" [disabled]="vm.saving()">Cancelar</button>
         </div>
       </footer>
     </form>

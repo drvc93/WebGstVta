@@ -9,15 +9,22 @@ namespace GestVta.Api.Controllers;
 [ApiController]
 [Route("api/roles/{rolId:int}/permisos-menu")]
 [Authorize]
-public sealed class RolMenuPermisosController(IRolMenuPermisosService permisosService) : ControllerBase
+public sealed class RolMenuPermisosController : ControllerBase
 {
+    private readonly IRolMenuPermisosService _permisosService;
+
+    public RolMenuPermisosController(IRolMenuPermisosService permisosService)
+    {
+        _permisosService = permisosService;
+    }
+
     private static bool EsAdmin(ClaimsPrincipal u) => u.IsInRole("ADMIN");
 
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<RolMenuPermisoFilaDto>>> GetPorRol(int rolId, CancellationToken ct)
     {
         if (!EsAdmin(User)) return Forbid();
-        var (filas, rolNotFound) = await permisosService.GetPorRolAsync(rolId, ct);
+        var (filas, rolNotFound) = await _permisosService.GetPorRolAsync(rolId, ct);
         if (rolNotFound) return NotFound();
         return Ok(filas);
     }
@@ -26,7 +33,7 @@ public sealed class RolMenuPermisosController(IRolMenuPermisosService permisosSe
     public async Task<IActionResult> Guardar(int rolId, [FromBody] IReadOnlyList<RolMenuPermisoGuardarDto> filas, CancellationToken ct)
     {
         if (!EsAdmin(User)) return Forbid();
-        var err = await permisosService.GuardarAsync(rolId, filas, ct);
+        var err = await _permisosService.GuardarAsync(rolId, filas, ct);
         if (err == "ROL_NOT_FOUND") return NotFound();
         if (err == "INVALID_MENU_IDS") return BadRequest("Hay opciones de menú inválidas.");
         if (err is not null) return BadRequest(err);
